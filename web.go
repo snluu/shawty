@@ -8,7 +8,7 @@ import "code.google.com/p/gorilla/mux"
 
 var (
 	indexHtml = template.Must(template.ParseFiles("index.html"))
-	shawtyJs = template.Must(template.ParseFiles("shawty.js"))
+	shawtyJs  = template.Must(template.ParseFiles("shawty.js"))
 )
 var urlPattern = regexp.MustCompile("^(?i)(https?|ftp|file)://.+$")
 var domain = os.Getenv("SHAWTY_DOMAIN")
@@ -45,8 +45,8 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data = map[string]interface{}{
-		"Short": domain + ShortID(s.ID, s.Rand),
-		"Hits":  s.Hits,
+		"Short":     domain + ShortID(s.ID, s.Rand),
+		"Hits":      s.Hits,
 		"Timestamp": s.CreatedOn,
 	}
 
@@ -61,7 +61,6 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 	Linfof("URL: %s", url)
 	Linfof("Shawty: %v", s)
 }
-
 
 func HandleShortID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
