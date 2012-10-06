@@ -1,0 +1,8 @@
+export GOPATH=""
+
+export SHAWTY_DOMAIN=""
+export SHAWTY_DB=""
+export PORT=80
+
+go build .
+sudo nohup ./shawty > $HOME/shawty.out 2> $HOME/shawty.err < /dev/null
