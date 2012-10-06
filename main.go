@@ -9,8 +9,9 @@ import "net/http"
 func main() {
 
 	var router = mux.NewRouter()
-	router.HandleFunc("/", HandleIndex).Methods("GET")
-	router.HandleFunc("/shawty.js", HandleShawtyJS).Methods("GET")
+	router.HandleFunc("/", HandleIndex)
+	router.HandleFunc("/shawty.js", HandleShawtyJS)
+	router.HandleFunc("/{shortID:[A-Za-z0-9]+}", HandleShortID)
 
 	var port = os.Getenv("PORT")
 	if port == "" {

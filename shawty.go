@@ -72,7 +72,7 @@ func (sh *Shawties) getByUrl(url string) (*Shawty, error) {
 }
 
 // get fetches a Shawty instance by the ID and a random 
-func (sh *Shawties) getByID(id uint64, r string) (*Shawty, error) {
+func (sh *Shawties) GetByID(id uint64, r string) (*Shawty, error) {
 	var stmt, err = sh.db.Prepare("select `ID`, `Rand`, `Hits`, `Url`, `CreatedOn` from `shawties` where `ID` = ? and `Rand` = ? limit 1")
 	if err != nil {
 		return nil, err

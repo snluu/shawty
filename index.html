@@ -3,11 +3,49 @@
 
 <head>
 	<title>shawty</title>
+	<style>
+		input {
+			font-size: 1.2em;
+		}
+
+		#longUrl {
+			width: 350px;
+			text-align: center;
+		}
+	</style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	
+	<script>
+		var longUrlBox;
+		$(function() {
+			longUrlBox = $('#longUrl');
+		})
+
+		function shawty(url, hits, timestamp) {
+			longUrlBox.val(url);
+			longUrlBox.select();
+		}
+
+		function shorten() {
+			var url = longUrlBox.val();
+			$.getScript('shawty.js?url=' + escape(url));
+
+			return false;
+		}
+
+		
+	</script>
 </head>
 
 <body>
 <center>
 	<h1>shawty</h1>
+	<form onSubmit="javascript: return shorten();">
+		<input type="text" placeholder="Enter a long URL" id="longUrl">
+		<br>
+		<input type="submit" value="Shorten" style="margin-top: 10px;">
+	</form>
+	<img src="http://i.imgur.com/cAssX.jpg" border="0" style="padding-top: 100px;">
 </center>
 </body>
 
