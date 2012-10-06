@@ -5,6 +5,7 @@ import "net/http"
 import "regexp"
 import "os"
 import "code.google.com/p/gorilla/mux"
+import "strings"
 
 var (
 	indexHtml = template.Must(template.ParseFiles("index.html"))
@@ -37,6 +38,11 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer sh.Close()
+
+	if strings.HasPrefix(strings.ToLower(url), strings.ToLower(domain)) {
+		Lerrorf("Do not try to shorten itself: %s", url)
+		http.NotFound(w, r)
+	}
 
 	s, err := sh.GetOrCreate(url)
 	if err != nil {
