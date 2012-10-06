@@ -87,6 +87,8 @@ func HandleShortID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sh.IncHits(id)
+
 	Linfof("Redirecting '%s' to '%s'", shortID, s.Url)
-	http.Redirect(w, r, s.Url, http.StatusMovedPermanently)
+	http.Redirect(w, r, s.Url, http.StatusFound)
 }

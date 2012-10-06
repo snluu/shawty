@@ -127,3 +127,16 @@ func (sh *Shawties) GetOrCreate(url string) (*Shawty, error) {
 
 	return s, err
 }
+
+func (sh *Shawties) IncHits(id uint64) error {
+	stmt, err := sh.db.Prepare("update `shawties` set `Hits` = `Hits` + 1 where `ID` = ?") 
+	if err != nil {
+		return err
+	}
+	defer stmt.Close();
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

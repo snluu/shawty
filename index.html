@@ -12,24 +12,30 @@
 		input {
 			font-size: 1.2em;
 			font-family: inherit;
+			text-align: center;
 		}
 
 		#longUrl {
-			width: 350px;
-			text-align: center;
+			width: 350px;			
 		}
 	</style>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	
 	<script>
 		var longUrlBox;
+		var shortUrlBox;
 		$(function() {
 			longUrlBox = $('#longUrl');
-		})
+			shortUrlBox = $('#shortUrl');
+			shortUrlBox.hide();
+		});
 
 		function shawty(url, hits, timestamp) {
-			longUrlBox.val(url);
-			longUrlBox.select();
+			longUrlBox.val('');
+			shortUrlBox.val(url);
+			shortUrlBox.show();
+			shortUrlBox.focus();
+			shortUrlBox.select();			
 		}
 
 		function shorten() {
@@ -49,9 +55,13 @@
 	<form onSubmit="javascript: return shorten();">
 		<input type="text" placeholder="Enter a long URL" id="longUrl">
 		<br>
-		<input type="submit" value="Shorten" style="margin-top: 10px;">
+		<input type="submit" value="Shorten" style="margin-top: 10px;">		
 	</form>
-	<img src="http://i.imgur.com/cAssX.jpg" border="0" style="padding-top: 100px;">
+	<br><br>
+	<input type="text" placeholder="shortUrl" id="shortUrl" onclick="this.select();">
+	<p>
+		<img src="http://i.imgur.com/cAssX.jpg" border="0" style="padding-top: 100px;">
+	</p>
 </center>
 </body>
 
