@@ -4,8 +4,14 @@
 <head>
 	<title>shawty</title>
 	<style>
+
+		body {
+			font-family: "Georgia", Times, "Times New Roman", serif;
+		}
+
 		input {
 			font-size: 1.2em;
+			font-family: inherit;
 		}
 
 		#longUrl {
@@ -39,7 +45,7 @@
 
 <body>
 <center>
-	<h1>shawty</h1>
+	<h2>shawty</h2>
 	<form onSubmit="javascript: return shorten();">
 		<input type="text" placeholder="Enter a long URL" id="longUrl">
 		<br>
