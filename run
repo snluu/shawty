@@ -4,5 +4,8 @@ export SHAWTY_DOMAIN=""
 export SHAWTY_DB=""
 export PORT=80
 
+go get code.google.com/p/go-mysql-driver/mysql
+go get code.google.com/p/gorilla/mux
+
 go build .
 nohup ./shawty > $HOME/shawty.out 2> $HOME/shawty.err < /dev/null
