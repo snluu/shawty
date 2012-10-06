@@ -15,32 +15,44 @@
 			text-align: center;
 		}
 
-		#longUrl {
+		#url {
 			width: 350px;			
+		}
+
+		#msg {
+			text-align: center;
+			color: red;
+			font-size: 0.9em;
+			font-family: inherit;
+			height: 15px;
 		}
 	</style>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	
 	<script>
-		var longUrlBox;
-		var shortUrlBox;
+		var urlBox;
+		var msgDiv;
+
 		$(function() {
-			longUrlBox = $('#longUrl');
-			shortUrlBox = $('#shortUrl');
-			shortUrlBox.hide();
+			urlBox = $('#url');
+			msgDiv = $('#msg');
 		});
 
-		function shawty(url, hits, timestamp) {
-			longUrlBox.val('');
-			shortUrlBox.val(url);
-			shortUrlBox.show();
-			shortUrlBox.focus();
-			shortUrlBox.select();			
+		function shawty(data) {
+			if (data.success == 0) {
+				msgDiv.text(data.message)
+			}
+			else {
+				msgDiv.text(' ')
+				urlBox.val(data.short);
+				urlBox.focus();
+				urlBox.select();
+			}			
 		}
 
 		function shorten() {
-			var url = longUrlBox.val();
-			$.getScript('shawty.js?url=' + escape(url));
+			var urlStr = urlBox.val();
+			$.getScript('shawty.js?url=' + escape(urlStr));
 
 			return false;
 		}
@@ -53,12 +65,12 @@
 <center>
 	<h2>shawty</h2>
 	<form onSubmit="javascript: return shorten();">
-		<input type="text" placeholder="Enter a long URL" id="longUrl">
+		<input type="text" placeholder="Enter a long URL" id="url">
 		<br>
 		<input type="submit" value="Shorten" style="margin-top: 10px;">		
 	</form>
-	<br><br>
-	<input type="text" placeholder="shortUrl" id="shortUrl" onclick="this.select();">
+	<div id="msg" color="red">&nbsp;</div>
+
 	<p>
 		<img src="http://i.imgur.com/cAssX.jpg" border="0" style="padding-top: 100px;">
 	</p>

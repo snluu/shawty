@@ -6,6 +6,8 @@ import "regexp"
 import "os"
 import "code.google.com/p/gorilla/mux"
 import "strings"
+import "net/url"
+import "time"
 
 var (
 	indexHtml = template.Must(template.ParseFiles("index.html"))
@@ -25,48 +27,75 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
-	var url = r.FormValue("url")
-	if !urlPattern.MatchString(url) {
+
+	var u = r.FormValue("url")
+	if u == "" {
+		u = r.Referer()
+		if u != "" {
+			// if it's in the referer then we don't want the browser to cache this
+			w.Header().Set("Cache-Control", "no-cache")
+			http.Redirect(w, r, "shawty.js?url=" + url.QueryEscape(u), http.StatusTemporaryRedirect)
+			return 
+		}
+	}
+
+	if !urlPattern.MatchString(u) {
 		http.NotFound(w, r)
 		return
 	}
+
+	data := map[string]interface{} {
+		"Success": 1,
+		"Message": "",
+		"Long": "",
+		"Short": "",
+		"Timestamp": time.Now(),
+		"Hits": 0,
+	}
+	code := http.StatusOK
 
 	var sh, err = NewShawties()
 	if err != nil {
 		Lerror(err)
-		http.Error(w, "Error", http.StatusInternalServerError)
-		return
+		data["Success"] = 0
+		data["Message"] = "unknown error occured"
+		code = http.StatusInternalServerError
 	}
 	defer sh.Close()
 
-	if strings.HasPrefix(strings.ToLower(url), strings.ToLower(domain)) {
-		Lerrorf("Do not try to shorten itself: %s", url)
-		http.NotFound(w, r)
-		return
+	if (code == http.StatusOK) {
+		if strings.HasPrefix(strings.ToLower(u), strings.ToLower(domain)) {
+			Lerrorf("Do not try to shorten itself: %s", u)
+			data["Success"] = 0
+			data["Message"] = "link is already shortened"
+			code = http.StatusBadRequest
+		} else {
+			s, err := sh.GetOrCreate(u)
+			if err != nil {
+				Lerror(err)
+				data["Success"] = 0
+				data["Message"] = "cannot shorten this link"
+				code = http.StatusNotFound
+			} else {
+				data["Long"] = s.Url
+				data["Short"] = domain + ShortID(s.ID, s.Rand)
+				data["Timestamp"] = s.CreatedOn
+				data["Hits"] = s.Hits
+
+				Linfo("ShawtyJS requested")
+				Linfof("URL: %s", u)
+				Linfof("Shawty: %v", s)
+			}
+		}
 	}
 
-	s, err := sh.GetOrCreate(url)
-	if err != nil {
-		Lerror(err)
-		http.NotFound(w, r)
-	}
-
-	var data = map[string]interface{}{
-		"Short":     domain + ShortID(s.ID, s.Rand),
-		"Hits":      s.Hits,
-		"Timestamp": s.CreatedOn,
-	}
-
+	// w.WriteHeader(code)
 	if err := shawtyJs.Execute(w, data); err != nil {
 		Lerror("Cannot execute shawty javascript template")
 		Lerror(err)
 		http.Error(w, "Error", http.StatusInternalServerError)
 		return
 	}
-
-	Linfo("ShawtyJS requested")
-	Linfof("URL: %s", url)
-	Linfof("Shawty: %v", s)
 }
 
 func HandleShortID(w http.ResponseWriter, r *http.Request) {

@@ -112,6 +112,7 @@ func (sh *Shawties) create(r string, url string) (*Shawty, error) {
 		return nil, err
 	}
 	var s = &Shawty{uint64(id), r, 0, url, now}
+	Linfof("Created link ID %d", id)
 	return s, nil
 }
 
