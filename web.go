@@ -42,6 +42,7 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 	if strings.HasPrefix(strings.ToLower(url), strings.ToLower(domain)) {
 		Lerrorf("Do not try to shorten itself: %s", url)
 		http.NotFound(w, r)
+		return
 	}
 
 	s, err := sh.GetOrCreate(url)
