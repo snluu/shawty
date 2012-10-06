@@ -5,8 +5,12 @@ import "code.google.com/p/gorilla/mux"
 import "net"
 import "os"
 import "net/http"
+import "time"
+import "math/rand"
 
 func main() {
+
+	rand.Seed(time.Now().Unix())
 
 	var router = mux.NewRouter()
 	router.HandleFunc("/", HandleIndex)
