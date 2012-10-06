@@ -26,6 +26,14 @@
 			font-family: inherit;
 			height: 15px;
 		}
+
+		.cntr { text-align: center; }
+
+		.fixedwidth {
+			width: 700px;
+			margin-left: auto;
+			margin-right: auto;
+		}
 	</style>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	
@@ -62,19 +70,51 @@
 </head>
 
 <body>
-<center>
-	<h2>shawty</h2>
-	<form onSubmit="javascript: return shorten();">
-		<input type="text" placeholder="Enter a long URL" id="url">
-		<br>
-		<input type="submit" value="Shorten" style="margin-top: 10px;">		
-	</form>
-	<div id="msg" color="red">&nbsp;</div>
+	<div class="cntr">
+		<a href="#embed">use it on your site</a> | 
+		<a href="http://github.com/3fps/shawty">source code</a>
+	</div>
+	<h2 class="cntr">shawty</h2>
+	<div class="cntr">
+		<form onSubmit="javascript: return shorten();">
+			<input type="text" placeholder="Enter a long URL" id="url">
+			<br>
+			<input type="submit" value="Shorten" style="margin-top: 10px;">		
+		</form>
+		<div id="msg" color="red">&nbsp;</div>
+	</div>
 
-	<p>
-		<img src="http://i.imgur.com/cAssX.jpg" border="0" style="padding-top: 100px;">
+	<p class="cntr">
+		<img src="http://i.imgur.com/cAssX.jpg" border="0" style="padding-top: 50px;">
 	</p>
-</center>
+
+	<p style="margin-top: 80px;">
+		<a name="embed" style="margin-top: 100px;">
+			<h2 class="cntr">use it on your website</h2>
+		</a>
+	</p>
+
+	<p class="fixedwidth">
+		To use &quot;<i>shawty</i>&quot; on your site, you simply have to
+		reference a javascript file. It'll invoke the function <code>shawty(data)</code> with the shorten URL and other miscellaneous bits of data:
+	</p>
+	<div class="fixedwidth">
+		<script src="https://gist.github.com/3846431.js"> </script>
+	</div>
+
+	<p class="fixedwidth">
+		When embedded into your site, <code>shawty.js</code> determines the long URL based on the <strong>&quot;Referer&quot;</strong> header attribute.
+		Example:
+	</p>
+	<div class="fixedwidth">
+		<script src="https://gist.github.com/3846438.js"> </script>
+	</div>
+
+	<footer>
+		<p class="cntr" style="margin-top: 80px;">
+			@sluu99 - 2012. Released under <a href="http://sam.zoy.org/wtfpl/" target="_blank">WTFPL</a>
+		</p>
+	</footer>
 </body>
 
 </html>
