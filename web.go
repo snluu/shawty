@@ -89,6 +89,7 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	w.Header().Set("Content-Type", "application/javascript")
 	// w.WriteHeader(code)
 	if err := shawtyJs.Execute(w, data); err != nil {
 		Lerror("Cannot execute shawty javascript template")
@@ -125,5 +126,5 @@ func HandleShortID(w http.ResponseWriter, r *http.Request) {
 	sh.IncHits(id)
 
 	Linfof("Redirecting '%s' to '%s'", shortID, s.Url)
-	http.Redirect(w, r, s.Url, http.StatusFound)
+	http.Redirect(w, r, s.Url, http.StatusMovedPermanently)
 }
