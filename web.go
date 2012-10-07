@@ -34,68 +34,69 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 		if u != "" {
 			// if it's in the referer then we don't want the browser to cache this
 			w.Header().Set("Cache-Control", "no-cache")
-			http.Redirect(w, r, "shawty.js?url=" + url.QueryEscape(u), http.StatusTemporaryRedirect)
-			return 
+			http.Redirect(w, r, "shawty.js?url="+url.QueryEscape(u), http.StatusTemporaryRedirect)
+			return
 		}
 	}
 
-	if !urlPattern.MatchString(u) {
-		http.NotFound(w, r)
-		return
-	}
-
-	data := map[string]interface{} {
-		"Success": 1,
-		"Message": "",
-		"Long": "",
-		"Short": "",
+	data := map[string]interface{}{
+		"Success":   1,
+		"Message":   "",
+		"Long":      "",
+		"Short":     "",
 		"Timestamp": time.Now(),
-		"Hits": 0,
+		"Hits":      0,
 	}
 	code := http.StatusOK
 
-	var sh, err = NewShawties()
-	if err != nil {
-		Lerror(err)
+	if !urlPattern.MatchString(u) {
 		data["Success"] = 0
-		data["Message"] = "unknown error occured"
-		code = http.StatusInternalServerError
+		data["Message"] = "invalid url"
+		code = http.StatusBadRequest
 	}
-	defer sh.Close()
 
-	if (code == http.StatusOK) {
-		if strings.HasPrefix(strings.ToLower(u), strings.ToLower(domain)) {
-			Lerrorf("Do not try to shorten itself: %s", u)
+	if code == http.StatusOK {
+		var sh, err = NewShawties()
+		if err != nil {
+			Lerror(err)
 			data["Success"] = 0
-			data["Message"] = "link is already shortened"
-			code = http.StatusBadRequest
-		} else {
-			s, err := sh.GetOrCreate(u)
-			if err != nil {
-				Lerror(err)
-				data["Success"] = 0
-				data["Message"] = "cannot shorten this link"
-				code = http.StatusNotFound
-			} else {
-				data["Long"] = s.Url
-				data["Short"] = domain + ShortID(s.ID, s.Rand)
-				data["Timestamp"] = s.CreatedOn
-				data["Hits"] = s.Hits
+			data["Message"] = "unknown error occured"
+			code = http.StatusInternalServerError
+		}
+		defer sh.Close()
 
-				Linfo("ShawtyJS requested")
-				Linfof("URL: %s", u)
-				Linfof("Shawty: %v", s)
+		if code == http.StatusOK {
+			if strings.HasPrefix(strings.ToLower(u), strings.ToLower(domain)) {
+				Lerrorf("Do not try to shorten itself: %s", u)
+				data["Success"] = 0
+				data["Message"] = "link is already shortened"
+				code = http.StatusBadRequest
+			} else {
+				s, err := sh.GetOrCreate(u)
+				if err != nil {
+					Lerror(err)
+					data["Success"] = 0
+					data["Message"] = "cannot shorten this link"
+					code = http.StatusNotFound
+				} else {
+					data["Long"] = s.Url
+					data["Short"] = domain + ShortID(s.ID, s.Rand)
+					data["Timestamp"] = s.CreatedOn
+					data["Hits"] = s.Hits
+
+					Linfo("ShawtyJS requested")
+					Linfof("URL: %s", u)
+					Linfof("Shawty: %v", s)
+				}
 			}
 		}
 	}
 
 	w.Header().Set("Content-Type", "application/javascript")
-	// w.WriteHeader(code)
 	if err := shawtyJs.Execute(w, data); err != nil {
 		Lerror("Cannot execute shawty javascript template")
 		Lerror(err)
 		http.Error(w, "Error", http.StatusInternalServerError)
-		return
 	}
 }
 
