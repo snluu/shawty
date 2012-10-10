@@ -1,7 +1,9 @@
 package main
 
-import "testing"
-import "math/rand"
+import (
+	"math/rand"
+	"testing"
+)
 
 // TestSanity makes sure g(f(x)) = x
 func TestSanity(t *testing.T) {

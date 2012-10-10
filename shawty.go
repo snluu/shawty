@@ -1,11 +1,13 @@
 package main
 
-import "database/sql"
-import "os"
-import "time"
-import _ "code.google.com/p/go-mysql-driver/mysql"
-import "math/rand"
-import "errors"
+import (
+	_ "code.google.com/p/go-mysql-driver/mysql"
+	"database/sql"
+	"errors"
+	"math/rand"
+	"os"
+	"time"
+)
 
 type Shawty struct {
 	ID        uint64

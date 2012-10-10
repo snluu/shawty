@@ -1,13 +1,15 @@
 package main
 
-import "html/template"
-import "net/http"
-import "regexp"
-import "os"
-import "code.google.com/p/gorilla/mux"
-import "strings"
-import "net/url"
-import "time"
+import (
+	"code.google.com/p/gorilla/mux"
+	"html/template"
+	"net/http"
+	"net/url"
+	"os"
+	"regexp"
+	"strings"
+	"time"
+)
 
 var (
 	indexHtml = template.Must(template.ParseFiles("templates/index.html"))
@@ -17,7 +19,7 @@ var urlPattern = regexp.MustCompile("^(?i)(https?|ftp|file)://.+$")
 var domain = os.Getenv("SHAWTY_DOMAIN")
 
 func HandleIndex(w http.ResponseWriter, r *http.Request) {
-	data := map[string]interface{} { "Domain": domain }
+	data := map[string]interface{}{"Domain": domain}
 
 	if err := indexHtml.Execute(w, data); err != nil {
 		Lerror("Cannot execute index template")
@@ -43,12 +45,12 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"Bookmarklet": false,
-		"Success":   1,
-		"Message":   "",
-		"Long":      "",
-		"Short":     "",
-		"Timestamp": time.Now(),
-		"Hits":      0,
+		"Success":     1,
+		"Message":     "",
+		"Long":        "",
+		"Short":       "",
+		"Timestamp":   time.Now(),
+		"Hits":        0,
 	}
 	code := http.StatusOK
 

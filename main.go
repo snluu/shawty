@@ -1,12 +1,14 @@
 package main
 
-import "fmt"
-import "code.google.com/p/gorilla/mux"
-import "net"
-import "os"
-import "net/http"
-import "time"
-import "math/rand"
+import (
+	"code.google.com/p/gorilla/mux"
+	"fmt"
+	"math/rand"
+	"net"
+	"net/http"
+	"os"
+	"time"
+)
 
 func main() {
 
