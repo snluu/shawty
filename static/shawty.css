@@ -68,6 +68,12 @@ footer {
 	text-shadow: 2px 2px 2px #d8d8d8;
 }
 
+#shawtyBtn {
+	margin-top: 10px; 
+	font-size:1.5em;
+	font-weight: 300;
+}
+
 .cntr { text-align: center; }
 
 .fixedwidth {

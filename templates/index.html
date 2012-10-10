@@ -23,9 +23,7 @@
 			<form onSubmit="javascript: return shorten();">
 				<input type="text" placeholder="Enter a long URL" id="url">
 				<br>
-				<span style="font-size:0.7em">(URLs are case-sensitive. {{.Domain}}<strong>abc</strong> is different from {{.Domain}}<strong>AbC</strong>)</span>
-				<br>
-				<input type="submit" value="Shorten" style="margin-top: 10px;">		
+				<button type="submit" id="shawtyBtn">Shorten</button>		
 			</form>
 			<div id="msg" color="red">&nbsp;</div>
 		</div>
