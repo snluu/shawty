@@ -10,14 +10,16 @@ import "net/url"
 import "time"
 
 var (
-	indexHtml = template.Must(template.ParseFiles("index.html"))
-	shawtyJs  = template.Must(template.ParseFiles("shawty.js"))
+	indexHtml = template.Must(template.ParseFiles("templates/index.html"))
+	shawtyJs  = template.Must(template.ParseFiles("templates/shawty.js"))
 )
 var urlPattern = regexp.MustCompile("^(?i)(https?|ftp|file)://.+$")
 var domain = os.Getenv("SHAWTY_DOMAIN")
 
 func HandleIndex(w http.ResponseWriter, r *http.Request) {
-	if err := indexHtml.Execute(w, nil); err != nil {
+	data := map[string]interface{} { "Domain": domain }
+
+	if err := indexHtml.Execute(w, data); err != nil {
 		Lerror("Cannot execute index template")
 		Lerror(err)
 		http.Error(w, "Error", http.StatusInternalServerError)
@@ -40,6 +42,7 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
+		"Bookmarklet": false,
 		"Success":   1,
 		"Message":   "",
 		"Long":      "",
@@ -48,6 +51,9 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 		"Hits":      0,
 	}
 	code := http.StatusOK
+
+	// bookmarklet param
+	data["Bookmarklet"] = r.FormValue("bm") == "1"
 
 	if !urlPattern.MatchString(u) {
 		data["Success"] = 0

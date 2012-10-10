@@ -13,6 +13,7 @@ func main() {
 	rand.Seed(time.Now().Unix())
 
 	var router = mux.NewRouter()
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	router.HandleFunc("/", HandleIndex)
 	router.HandleFunc("/shawty.js", HandleShawtyJS)
 	router.HandleFunc("/{shortID:[A-Za-z0-9]+}", HandleShortID)

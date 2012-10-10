@@ -3,116 +3,67 @@
 
 <head>
 	<title>shawty</title>
-	<style>
-
-		body {
-			font-family: "Georgia", Times, "Times New Roman", serif;
-		}
-
-		input {
-			font-size: 1.2em;
-			font-family: inherit;
-			text-align: center;
-		}
-
-		#url {
-			width: 350px;			
-		}
-
-		#msg {
-			text-align: center;
-			color: red;
-			font-size: 0.9em;
-			font-family: inherit;
-			height: 15px;
-		}
-
-		.cntr { text-align: center; }
-
-		.fixedwidth {
-			width: 700px;
-			margin-left: auto;
-			margin-right: auto;
-		}
-	</style>
+	<link rel="stylesheet" href="static/shawty.css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-	
-	<script>
-		var urlBox;
-		var msgDiv;
-
-		$(function() {
-			urlBox = $('#url');
-			msgDiv = $('#msg');
-			urlBox.focus();
-		});
-
-		function shawty(data) {
-			if (data.success == 0) {
-				msgDiv.text(data.message)
-			}
-			else {
-				msgDiv.text(' ')
-				urlBox.val(data.short);
-				urlBox.focus();
-				urlBox.select();
-			}			
-		}
-
-		function shorten() {
-			var urlStr = urlBox.val();
-			$.getScript('shawty.js?url=' + escape(urlStr));
-
-			return false;
-		}
-
-		
-	</script>
+	<script src="static/index.js"></script>
 </head>
 
 <body>
-	<div class="cntr">
-		<a href="#embed">use it on your site</a> | 
-		<a href="http://github.com/3fps/shawty">source code</a>
-	</div>
-	<h2 class="cntr">shawty</h2>
-	<div class="cntr">
-		<form onSubmit="javascript: return shorten();">
-			<input type="text" placeholder="Enter a long URL" id="url">
-			<br>
-			<input type="submit" value="Shorten" style="margin-top: 10px;">		
-		</form>
-		<div id="msg" color="red">&nbsp;</div>
-	</div>
+	<nav>
+		<div>
+			<a href="#bookmarklet">bookmarklet</a> |
+			<a href="#embed">use it on your site</a> | 
+			<a href="http://github.com/3fps/shawty">source code</a>
+		</div>
+	</nav>
 
-	<p class="cntr">
-		<img src="//raw.github.com/3fps/shawty/master/sb.jpeg" border="0" style="padding-top: 50px;">
-	</p>
+	<section id="shawtySec" class="cntr">
+		<h1 id="brand">shawty</h1>
+		<div>
+			<form onSubmit="javascript: return shorten();">
+				<input type="text" placeholder="Enter a long URL" id="url">
+				<br>
+				<input type="submit" value="Shorten" style="margin-top: 10px;">		
+			</form>
+			<div id="msg" color="red">&nbsp;</div>
+		</div>
+	</section>
 
-	<p style="margin-top: 80px;">
-		<a name="embed" style="margin-top: 100px;">
-			<h2 class="cntr">use it on your website</h2>
-		</a>
-	</p>
+	<section>
+		<p><a name="bookmarklet"></a><h2 class="cntr">bookmarklet</h2></p>
+		<p class="fixedwidth">
+			To quickly create short URLs while you're browsing, just drag this button into your
+			bookmark bar:
+		</p>
+		<p class="fixedwidth cntr">
+			<a class="btn" href="javascript:(function() { s = document.createElement('script'); s.setAttribute('src', '{{.Domain}}shawty.js?bm=1&amp;url=' + escape(window.location)); document.documentElement.appendChild(s);})()">shawty
+			</a>
+		</p>
+	</section>
 
-	<p class="fixedwidth">
-		To use &quot;<i>shawty</i>&quot; on your site, you simply have to
-		reference a javascript file. It'll invoke the function <code>shawty(data)</code> with the shorten URL and other miscellaneous bits of data:
-	</p>
-	<div class="fixedwidth">
-		<script src="https://gist.github.com/3846431.js"> </script>
-	</div>
 
-	<p class="fixedwidth">
-		When embedded into your site, <code>shawty.js</code> determines the long URL based on the <strong>&quot;Referer&quot;</strong> header attribute.
-		Example:
-	</p>
-	<div class="fixedwidth">
-		<script src="https://gist.github.com/3846438.js"> </script>
-	</div>
+	<section>
+		<p><a name="embed"></a><h2 class="cntr">use it on your website</h2></p>
+
+		<p class="fixedwidth">
+			To use &quot;<i>shawty</i>&quot; on your site, you simply have to
+			reference a javascript file. It'll invoke the function <code>shawty(data)</code> with the shorten URL and other miscellaneous bits of data:
+		</p>
+		<div class="fixedwidth">
+			<script src="https://gist.github.com/3846431.js"> </script>
+		</div>
+
+		<p class="fixedwidth">
+			When embedded into your site, <code>shawty.js</code> determines the long URL based on the <strong>&quot;Referer&quot;</strong> header attribute.
+			Example:
+		</p>
+		<div class="fixedwidth">
+			<script src="https://gist.github.com/3846438.js"> </script>
+		</div>
+	</section>
 
 	<footer>
-		<p class="cntr" style="margin-top: 80px;">
+		<p class="cntr">
 			@sluu99 - 2012. Released under <a href="http://sam.zoy.org/wtfpl/" target="_blank">WTFPL</a>
 		</p>
 	</footer>

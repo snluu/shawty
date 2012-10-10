@@ -1,0 +1,89 @@
+body {
+	font-family: Helvetica, Arial, Tahoma, Verdana;		
+	margin: 0;	
+}
+
+a { color: #006699;}
+
+input, body, p, div { font-weight: 300; }
+
+h2 { 
+	font-weight: 400;
+	color: #6b6b6b;
+	margin: 0;
+}
+
+input {
+	font-size: 1.2em;
+	font-family: inherit;
+	text-align: center;
+}
+
+section {
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+nav {
+	text-align: right;
+	padding: 20px;
+	background-color: #ebebeb;
+}
+
+footer {
+	padding-bottom: 20px;
+}
+
+#url {
+	width: 400px;			
+}
+
+#msg {
+	text-align: center;
+	color: red;
+	font-size: 0.9em;
+	font-family: inherit;
+	height: 15px;
+}
+
+#shawtySec {
+	background-image: linear-gradient(bottom, rgb(255,255,255) 13%, rgb(235,235,235) 82%);
+	background-image: -o-linear-gradient(bottom, rgb(255,255,255) 13%, rgb(235,235,235) 82%);
+	background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 13%, rgb(235,235,235) 82%);
+	background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 13%, rgb(235,235,235) 82%);
+	background-image: -ms-linear-gradient(bottom, rgb(255,255,255) 13%, rgb(235,235,235) 82%);
+
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.13, rgb(255,255,255)),
+		color-stop(0.82, rgb(235,235,235))
+	);
+}
+
+#brand {
+	color: #6b6b6b;
+	font-size: 2.5em;
+	text-shadow: 2px 2px 2px #d8d8d8;
+}
+
+.cntr { text-align: center; }
+
+.fixedwidth {
+	width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.btn {
+    font-size: 1.5em;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 3px 8px 3px 8px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
+}
