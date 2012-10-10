@@ -59,7 +59,7 @@ func HandleShawtyJS(w http.ResponseWriter, r *http.Request) {
 
 	if !urlPattern.MatchString(u) {
 		data["Success"] = 0
-		data["Message"] = "invalid url"
+		data["Message"] = "a valid url has to start with http:// or https://"
 		code = http.StatusBadRequest
 	}
 
