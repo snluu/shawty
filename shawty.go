@@ -4,6 +4,7 @@ import (
 	_ "code.google.com/p/go-mysql-driver/mysql"
 	"database/sql"
 	"errors"
+	"go.3fps.com/utils/log"
 	"math/rand"
 	"os"
 	"time"
@@ -114,7 +115,7 @@ func (sh *Shawties) create(r string, url string) (*Shawty, error) {
 		return nil, err
 	}
 	var s = &Shawty{uint64(id), r, 0, url, now}
-	Linfof("Created link ID %d", id)
+	log.Infof("Created link ID %d", id)
 	return s, nil
 }
 

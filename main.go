@@ -3,6 +3,7 @@ package main
 import (
 	"code.google.com/p/gorilla/mux"
 	"fmt"
+	"go.3fps.com/utils/log"
 	"math/rand"
 	"net"
 	"net/http"
@@ -29,12 +30,12 @@ func main() {
 
 	var l, err = net.Listen("tcp", "0.0.0.0:"+port)
 	if err != nil {
-		Lerrorf("Cannot listen at %s", port)
+		log.Errorf("Cannot listen at %s", port)
 		fmt.Println(err)
 		return
 	}
 	defer l.Close()
-	Linfof("Listening at %s", port)
+	log.Infof("Listening at %s", port)
 
 	runMode := strings.ToLower(os.Getenv("SHAWTY_MODE"))
 	switch runMode {
