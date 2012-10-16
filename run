@@ -2,7 +2,8 @@ export GOPATH=""
 
 export SHAWTY_DOMAIN=""
 export SHAWTY_DB=""
-export PORT=80
+export SHAWTY_PORT=80
+export SHAWTY_MODE="HTTP" # or "FCGI"
 
 go get code.google.com/p/go-mysql-driver/mysql
 go get code.google.com/p/gorilla/mux

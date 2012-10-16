@@ -6,7 +6,9 @@ import (
 	"math/rand"
 	"net"
 	"net/http"
+	"net/http/fcgi"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -20,7 +22,7 @@ func main() {
 	router.HandleFunc("/shawty.js", HandleShawtyJS)
 	router.HandleFunc("/{shortID:[A-Za-z0-9]+}", HandleShortID)
 
-	var port = os.Getenv("PORT")
+	var port = os.Getenv("SHAWTY_PORT")
 	if port == "" {
 		port = "80"
 	}
@@ -34,5 +36,11 @@ func main() {
 	defer l.Close()
 	Linfof("Listening at %s", port)
 
-	http.Serve(l, router)
+	runMode := strings.ToLower(os.Getenv("SHAWTY_MODE"))
+	switch runMode {
+	case "fcgi":
+		fcgi.Serve(l, router)
+	default:
+		http.Serve(l, router)
+	}
 }
