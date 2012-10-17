@@ -2,7 +2,7 @@ package web
 
 import (
 	"code.google.com/p/gorilla/mux"
-	"../data"
+	"go.3fps.com/shawty/data"
 	"go.3fps.com/utils/log"
 	"net/http"
 )
