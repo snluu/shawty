@@ -3,9 +3,6 @@ export SHAWTY_DB=""                # e.g. SHAWTY_DB="user:password@tcp(localhost
 export SHAWTY_PORT=8080            # e.g. SHAWTY_PORT=8080
 export SHAWTY_MODE="HTTP"          # "HTTP" or "FCGI"
 
-go get code.google.com/p/go-mysql-driver/mysql
-go get code.google.com/p/gorilla/mux
-go get go.3fps.com/utils/log
-
+go get -d
 go build .
 nohup ./shawty > $HOME/shawty.out 2> $HOME/shawty.err < /dev/null &
