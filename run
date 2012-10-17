@@ -2,6 +2,7 @@ export SHAWTY_DOMAIN=""            # e.g. SHAWTY_DOMAIN="luu.bz"
 export SHAWTY_DB=""                # e.g. SHAWTY_DB="user:password@tcp(localhost:3306)/dbname"
 export SHAWTY_PORT=8080            # e.g. SHAWTY_PORT=8080
 export SHAWTY_MODE="HTTP"          # "HTTP" or "FCGI"
+export SHAWTY_LPM=30               # number of links can be created per minute (existings don't count)
 
 go get -d
 go build .
