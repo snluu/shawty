@@ -1,12 +1,11 @@
-export GOPATH=""
-
-export SHAWTY_DOMAIN=""
-export SHAWTY_DB=""
-export SHAWTY_PORT=80
-export SHAWTY_MODE="HTTP" # or "FCGI"
+export SHAWTY_DOMAIN=""            # e.g. SHAWTY_DOMAIN="luu.bz"
+export SHAWTY_DB=""                # e.g. SHAWTY_DB="user:password@tcp(localhost:3306)/dbname"
+export SHAWTY_PORT=8080            # e.g. SHAWTY_PORT=8080
+export SHAWTY_MODE="HTTP"          # "HTTP" or "FCGI"
 
 go get code.google.com/p/go-mysql-driver/mysql
 go get code.google.com/p/gorilla/mux
+go get go.3fps.com/utils/log
 
 go build .
 nohup ./shawty > $HOME/shawty.out 2> $HOME/shawty.err < /dev/null &
