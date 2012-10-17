@@ -5,3 +5,11 @@ install:
 script:
   - cd $GOPATH/src/go.3fps.com/shawty
   - go get -d -v && go build -v && go test -i ./... && go test -test.v ./... 
+notifications:
+  email: false
+branches:
+  only:
+    - master
+	- stable
+	- sandbox
+
