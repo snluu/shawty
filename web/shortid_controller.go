@@ -45,6 +45,8 @@ func (ctrl *ShortIDController) Respond(shortID string) (res *ResPkg) {
 }
 
 func (ctrl *ShortIDController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
 	vars := mux.Vars(r)
 	shortID := vars["shortID"]
 	res := ctrl.Respond(shortID)
