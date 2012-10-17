@@ -1,5 +1,5 @@
 {{if .}}
-{{if .Bookmarklet}}
+{{if .Data.Bookmarklet}}
 function shawty(data) {
 	if (data.success == 1)
 		prompt('Here\'s your short URL:', data.short);
@@ -9,11 +9,11 @@ function shawty(data) {
 {{end}}
 
 shawty({
-	'success':   {{.Success}},
-	'message':  '{{.Message}}',
-	'short':     '{{.Short}}',
-	'long':      '{{.Long}}',
-	'hits':      {{.Hits}}, 
-	'timestamp': {{.Timestamp.Unix}}
+	'success':   {{.Data.Success}},
+	'message':   '{{if .Errors}}{{index .Errors 0}}{{end}}',
+	'short':     'http://{{.Data.Domain}}/{{.Data.Short}}',
+	'long':      '{{.Data.Shawty.Url}}',
+	'hits':      {{if .Data.Shawty}}{{.Data.Shawty.Hits}}{{else}}0{{end}}, 
+	'timestamp': {{if .Data.Shawty}}{{.Data.Shawty.CreatedOn.Unix}}{{else}}0{{end}}
 });
 {{end}}

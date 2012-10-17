@@ -3,32 +3,52 @@ package main
 import (
 	"code.google.com/p/gorilla/mux"
 	"fmt"
+	"go.3fps.com/shawty/data"
+	"go.3fps.com/shawty/utils"
+	"go.3fps.com/shawty/web"
 	"go.3fps.com/utils/log"
-	"math/rand"
 	"net"
 	"net/http"
 	"net/http/fcgi"
 	"os"
-	"strings"
-	"time"
 )
 
 func main() {
 
-	rand.Seed(time.Now().Unix())
+	// read configurations
+	confKeys := []string{"SHAWTY_PORT", "SHAWTY_DB", "SHAWTY_DOMAIN", "SHAWTY_MODE"}
+	config := make(map[string]string)
+	for _, k := range confKeys {
+		config[k] = os.Getenv(k)
+	}
 
-	var router = mux.NewRouter()
+	// setup data
+	random := utils.NewBestRand()	
+	shawties, err := data.NewMySh(random, config["SHAWTY_DB"])
+	if err != nil {
+		log.Error("Cannot create MySh")
+		return
+	}
+	defer shawties.Close()
+
+	// register routes
+	home := web.NewHomeController(config)
+	shawtyjs := web.NewShawtyJSController(config, shawties)
+	shortID := web.NewShortIDController(config, shawties)
+
+	// setup HTTP server
+	router := mux.NewRouter()
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
-	router.HandleFunc("/", HandleIndex)
-	router.HandleFunc("/shawty.js", HandleShawtyJS)
-	router.HandleFunc("/{shortID:[A-Za-z0-9]+}", HandleShortID)
+	router.Handle("/", home)
+	router.Handle("/shawty.js", shawtyjs)
+	router.Handle("/{shortID:[A-Za-z0-9]+}", shortID)
 
-	var port = os.Getenv("SHAWTY_PORT")
+	var port = config["SHAWTY_PORT"]
 	if port == "" {
 		port = "80"
 	}
 
-	var l, err = net.Listen("tcp", "0.0.0.0:"+port)
+	l, err := net.Listen("tcp", "0.0.0.0:"+port)
 	if err != nil {
 		log.Errorf("Cannot listen at %s", port)
 		fmt.Println(err)
@@ -37,7 +57,7 @@ func main() {
 	defer l.Close()
 	log.Infof("Listening at %s", port)
 
-	runMode := strings.ToLower(os.Getenv("SHAWTY_MODE"))
+	runMode := config["SHAWTY_MODE"]
 	switch runMode {
 	case "fcgi":
 		fcgi.Serve(l, router)

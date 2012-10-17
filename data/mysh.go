@@ -1,62 +1,40 @@
-package main
+package data
 
 import (
 	_ "code.google.com/p/go-mysql-driver/mysql"
 	"database/sql"
-	"errors"
+	"go.3fps.com/shawty/utils"
 	"go.3fps.com/utils/log"
-	"math/rand"
-	"os"
 	"time"
 )
 
-type Shawty struct {
-	ID        uint64
-	Rand      string
-	Hits      uint64
-	Url       string
-	CreatedOn time.Time
+// MySh is the MySQL implementation of Shawties interface
+type MySh struct {
+	db     *sql.DB
+	random utils.Rand
 }
 
-// Shawties is the proxy to manage Shawty records in the database
-type Shawties struct {
-	db *sql.DB
-}
-
-// ShortID constructs a short ID
-func ShortID(id uint64, r string) string {
-	return r + toSafeBase(id)
-}
-
-// FullID deconstructs a full ID
-func FullID(str string) (uint64, string, error) {
-	if len(str) < 2 {
-		return 0, "", errors.New("Cannot deconstruct " + str)
-	}
-	return toDec(str[1:]), str[:1], nil
-}
-
-// NewShawties yields a new Shawties instance with pre-open database connection
-func NewShawties() (*Shawties, error) {
-	var sh = new(Shawties)
-	var err = sh.Open("mysql", os.Getenv("SHAWTY_DB"))
+// NewMySh yields a new MySh instance with pre-open database connection
+func NewMySh(random utils.Rand, dataSrc string) (*MySh, error) {
+	var sh = new(MySh)
+	sh.random = random
+	var err = sh.open("mysql", dataSrc)
 	return sh, err
 }
 
-// Open opens a new database connection
-func (sh *Shawties) Open(driverName, dataSrc string) error {
+// open opens a new database connection
+func (sh *MySh) open(driverName, dataSrc string) error {
 	var db, err = sql.Open(driverName, dataSrc)
 	sh.db = db
 	return err
 }
 
 // Close closes the database connection
-func (sh *Shawties) Close() error {
+func (sh *MySh) Close() error {
 	return sh.db.Close()
 }
 
-// get fetches a Shawty instance based on the URL
-func (sh *Shawties) getByUrl(url string) (*Shawty, error) {
+func (sh *MySh) GetByUrl(url string) (*Shawty, error) {
 	var stmt, err = sh.db.Prepare("select `ID`, `Rand`, `Hits`, `Url`, `CreatedOn` from `shawties` where `Url` = ? limit 1")
 	if err != nil {
 		return nil, err
@@ -74,8 +52,7 @@ func (sh *Shawties) getByUrl(url string) (*Shawty, error) {
 	return s, nil
 }
 
-// get fetches a Shawty instance by the ID and a random 
-func (sh *Shawties) GetByID(id uint64, r string) (*Shawty, error) {
+func (sh *MySh) GetByID(id uint64, r string) (*Shawty, error) {
 	var stmt, err = sh.db.Prepare("select `ID`, `Rand`, `Hits`, `Url`, `CreatedOn` from `shawties` where `ID` = ? and `Rand` = ? limit 1")
 	if err != nil {
 		return nil, err
@@ -93,12 +70,10 @@ func (sh *Shawties) GetByID(id uint64, r string) (*Shawty, error) {
 	return s, nil
 }
 
-// create inserts a new record into the database
-func (sh *Shawties) create(r string, url string) (*Shawty, error) {
+func (sh *MySh) Create(r string, url string) (*Shawty, error) {
 	if r == "" {
-		r = toSafeBase(uint64(rand.Int63n(int64(baseLen))))
+		r = utils.ToSafeBase(uint64(sh.random.Byte()) % utils.BaseLen)
 	}
-
 	var stmt, err = sh.db.Prepare("insert ignore into `shawties`(`Rand`, `Hits`, `Url`, `CreatedOn`) values(?, 0, ?, ?)")
 	if err != nil {
 		return nil, err
@@ -119,11 +94,11 @@ func (sh *Shawties) create(r string, url string) (*Shawty, error) {
 	return s, nil
 }
 
-func (sh *Shawties) GetOrCreate(url string) (*Shawty, error) {
-	var s, err = sh.getByUrl(url)
+func (sh *MySh) GetOrCreate(url string) (*Shawty, error) {
+	var s, err = sh.GetByUrl(url)
 	if err != nil {
 		// try creating
-		s, err = sh.create("", url)
+		s, err = sh.Create("", url)
 		if err != nil {
 			return nil, err
 		}
@@ -132,7 +107,7 @@ func (sh *Shawties) GetOrCreate(url string) (*Shawty, error) {
 	return s, err
 }
 
-func (sh *Shawties) IncHits(id uint64) error {
+func (sh *MySh) IncHits(id uint64) error {
 	stmt, err := sh.db.Prepare("update `shawties` set `Hits` = `Hits` + 1 where `ID` = ?")
 	if err != nil {
 		return err

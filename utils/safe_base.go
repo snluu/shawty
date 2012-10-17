@@ -1,4 +1,4 @@
-package main
+package utils
 
 import "bytes"
 
@@ -8,7 +8,7 @@ var baseChars = []byte{
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 }
 
-var baseLen = uint64(56)
+var BaseLen = uint64(56)
 
 // singleToDec converts a single base character to the equivalent decimal value
 func singleToDec(c byte) uint64 {
@@ -38,24 +38,24 @@ func singleToDec(c byte) uint64 {
 	return ^uint64(0)
 }
 
-// toSafeBase converts a decimal number (base 10) to the safe base representation
-func toSafeBase(n uint64) string {
-	if n < baseLen {
+// ToSafeBase converts a decimal number (base 10) to the safe base representation
+func ToSafeBase(n uint64) string {
+	if n < BaseLen {
 		return string(baseChars[n])
 	}
 
 	var buff bytes.Buffer
 
 	for n != 0 {
-		buff.WriteByte(baseChars[n%baseLen])
-		n /= baseLen
+		buff.WriteByte(baseChars[n%BaseLen])
+		n /= BaseLen
 	}
 
 	return buff.String()
 }
 
-// toDec converts a safe base stirng to an equivalent decimal (base 10) value
-func toDec(safe string) uint64 {
+// ToDec converts a safe base stirng to an equivalent decimal (base 10) value
+func ToDec(safe string) uint64 {
 	if len(safe) < 1 {
 		return ^uint64(0)
 	}
@@ -63,7 +63,7 @@ func toDec(safe string) uint64 {
 	var n, mul uint64 = 0, 1
 	for i := range safe {
 		n += singleToDec(safe[i]) * mul
-		mul *= baseLen
+		mul *= BaseLen
 	}
 	return n
 }
