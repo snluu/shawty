@@ -35,7 +35,6 @@ func (page *HomeController) Index() *ResPkg {
 	return res
 }
 
-
 func (page *HomeController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	res := page.Index()
 	tpl := getIndexHtml()

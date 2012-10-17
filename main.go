@@ -23,7 +23,7 @@ func main() {
 	}
 
 	// setup data
-	random := utils.NewBestRand()	
+	random := utils.NewBestRand()
 	shawties, err := data.NewMySh(random, config["SHAWTY_DB"])
 	if err != nil {
 		log.Error("Cannot create MySh")
