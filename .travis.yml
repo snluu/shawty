@@ -10,6 +10,6 @@ notifications:
 branches:
   only:
     - master
-	- stable
-	- sandbox
+    - stable
+    - sandbox
 
