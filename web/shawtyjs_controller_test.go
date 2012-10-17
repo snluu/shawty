@@ -16,7 +16,10 @@ func getShawtyJSTestData() (config map[string]string, seed uint64, sh data.Shawt
 	rand := utils.NewFakeRand()
 	rand.Seed(seed)
 
-	config = map[string]string{"SHAWTY_DOMAIN": fmt.Sprintf("shawty%d.local", seed)}
+	config = map[string]string{
+		"SHAWTY_DOMAIN": fmt.Sprintf("shawty%d.local", seed),
+		"SHAWTY_LPM":    "1000",
+	}
 
 	sh = data.NewMemSh(rand)
 	sh.Create("", "http://test.com/url1")
@@ -45,11 +48,6 @@ func testShawtyJSInvalidUrl(t *testing.T, url string) {
 	if res.HttpStatus != http.StatusOK {
 		t.Error("JS response always needs to have 200 status")
 	}
-}
-
-// TestShawtyJSInvalidUrl tests the response when the JS file is requested with an invalid Url
-func TestShawtyJSInvalidUrl(t *testing.T) {
-	testShawtyJSInvalidUrl(t, "some thing invalid")
 }
 
 func testShawtyJSValidUrl(t *testing.T, url string, expectedID uint64) {
@@ -82,6 +80,11 @@ func testShawtyJSValidUrl(t *testing.T, url string, expectedID uint64) {
 		t.Errorf("Wrong 'Shawty' returned. Expecting %v, got %v",
 			shawty, res.Data["Shawty"].(*data.Shawty))
 	}
+}
+
+// TestShawtyJSInvalidUrl tests the response when the JS file is requested with an invalid Url
+func TestShawtyJSInvalidUrl(t *testing.T) {
+	testShawtyJSInvalidUrl(t, "some thing invalid")
 }
 
 // TestShawtyJSExistingUrl tests the response when JS is requested with a valid existing URL
@@ -119,4 +122,28 @@ func TestShawtyJSDupDomain(t *testing.T) {
 
 	testShawtyJSInvalidUrl(t, url1)
 	testShawtyJSInvalidUrl(t, url2)
+}
+
+// TestShawtyJSRateLimit tests the rate limit and make sure it doesn't allow the same IP
+func TestShawtyJSRateLimit(t *testing.T) {
+	conf, _, sh := getShawtyJSTestData()
+	conf["SHAWTY_LPM"] = "3"
+
+	controller := NewShawtyJSController(conf, sh)
+	res := controller.GetJSResponse("http://test.com/url3", false)
+	if res.Data["Success"].(int) != 1 {
+		t.Error("Existing URL should not be affected by rate limit")
+	}
+
+	newUrl := "http://example.com/something-new"
+
+	res = controller.GetJSResponse(newUrl, false)
+	if res.Data["Success"].(int) != 0 {
+		t.Error("Rate limit must be applied when creating a new URL")
+	}
+
+	_, err := sh.GetByUrl(newUrl)
+	if err == nil {
+		t.Error("When rate limit is hit, new URL requests must not be created")
+	}
 }

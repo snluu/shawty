@@ -16,7 +16,7 @@ import (
 func main() {
 
 	// read configurations
-	confKeys := []string{"SHAWTY_PORT", "SHAWTY_DB", "SHAWTY_DOMAIN", "SHAWTY_MODE"}
+	confKeys := []string{"SHAWTY_PORT", "SHAWTY_DB", "SHAWTY_DOMAIN", "SHAWTY_MODE", "SHAWTY_LPM"}
 	config := make(map[string]string)
 	for _, k := range confKeys {
 		config[k] = os.Getenv(k)

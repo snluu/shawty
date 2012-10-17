@@ -1,5 +1,7 @@
 package data
 
+import "time"
+
 // Shawties defines the data access interface to manage Shawty instances
 type Shawties interface {
 	// GetByID fetches a Shawty instance by the ID and the random digit
@@ -12,4 +14,6 @@ type Shawties interface {
 	GetOrCreate(url string) (*Shawty, error)
 	// IncHits increases the hit count for the Shawty with the specific ID
 	IncHits(id uint64) error
+	// NumLinks counts the number of links created by a specific IP address after a point of time
+	NumLinks(creatorIP string, t time.Time)
 }
