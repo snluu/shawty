@@ -2,7 +2,7 @@ package data
 
 import (
 	"errors"
-	"go.3fps.com/shawty/utils"
+	"../utils"
 	"time"
 )
 

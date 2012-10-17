@@ -3,7 +3,7 @@ package data
 import (
 	_ "code.google.com/p/go-mysql-driver/mysql"
 	"database/sql"
-	"go.3fps.com/shawty/utils"
+	"../utils"
 	"go.3fps.com/utils/log"
 	"time"
 )

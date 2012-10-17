@@ -3,9 +3,9 @@ package main
 import (
 	"code.google.com/p/gorilla/mux"
 	"fmt"
-	"go.3fps.com/shawty/data"
-	"go.3fps.com/shawty/utils"
-	"go.3fps.com/shawty/web"
+	"./data"
+	"./utils"
+	"./web"
 	"go.3fps.com/utils/log"
 	"net"
 	"net/http"

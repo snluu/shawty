@@ -3,7 +3,7 @@ package web
 import (
 	"errors"
 	"fmt"
-	"go.3fps.com/shawty/data"
+	"../data"
 	"go.3fps.com/utils/log"
 	"html/template"
 	"net/http"
