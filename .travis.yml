@@ -1,5 +1,5 @@
 language: go
-install
+install:
   - go version
 script:
   - go get -d -v && go build -v
