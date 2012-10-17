@@ -3,5 +3,5 @@ install:
   - mkdir $GOPATH/src/go.3fps.com
   - mv $GOPATH/src/github.com/3fps/shawty $GOPATH/src/go.3fps.com
 script:
-  - $GOPATH/src/go.3fps.com/shawty
-  - go get -d -v && go build -v
+  - cd $GOPATH/src/go.3fps.com/shawty
+  - go get -d -v && go build -v && go test ./... -test.v
