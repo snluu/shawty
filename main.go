@@ -1,6 +1,7 @@
 package main
 
 import (
+	"runtime"
 	"code.google.com/p/gorilla/mux"
 	"fmt"
 	"go.3fps.com/shawty/data"
@@ -14,6 +15,7 @@ import (
 )
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// read configurations
 	confKeys := []string{"SHAWTY_PORT", "SHAWTY_DB", "SHAWTY_DOMAIN", "SHAWTY_MODE"}
