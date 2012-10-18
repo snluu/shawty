@@ -62,7 +62,7 @@ func (controller *ShawtyJSController) GetJSResponse(url string, bm bool) (res *R
 }
 
 func (controller *ShawtyJSController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
+	defer closeReqBody(r)
 	
 	var u = r.FormValue("url")
 	if u == "" {
