@@ -7,5 +7,6 @@ type Shawty struct {
 	Rand      string
 	Hits      uint64
 	Url       string
+	CreatorIP string
 	CreatedOn time.Time
 }

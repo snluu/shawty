@@ -43,20 +43,26 @@ func (ms *MemSh) GetByUrl(url string) (*Shawty, error) {
 	return nil, errors.New("Cannot find Shawty")
 }
 
-func (ms *MemSh) Create(r, url string) (*Shawty, error) {
+func (ms *MemSh) Create(r, url, creatorIP string) (*Shawty, error) {
 	if r == "" {
 		r = utils.ToSafeBase(uint64(ms.random.Byte()) % utils.BaseLen)
 	}
-	sh := &Shawty{ms.nextID, r, 0, url, time.Now()}
+	sh := &Shawty{
+		ID:        ms.nextID,
+		Rand:      r,
+		Hits:      0,
+		Url:       url,
+		CreatorIP: creatorIP,
+		CreatedOn: time.Now()}
 	ms.data = append(ms.data, sh)
 	ms.nextID++
 	return sh, nil
 }
 
-func (ms *MemSh) GetOrCreate(url string) (*Shawty, error) {
+func (ms *MemSh) GetOrCreate(url, creatorIP string) (*Shawty, error) {
 	sh, err := ms.GetByUrl(url)
 	if err != nil {
-		sh, err = ms.Create("", url)
+		sh, err = ms.Create("", url, creatorIP)
 	}
 	return sh, err
 }
@@ -70,4 +76,15 @@ func (ms *MemSh) IncHits(id uint64) error {
 	}
 
 	return errors.New("Cannot find Shawty")
+}
+
+func (ms *MemSh) NumLinks(creatorIP string, t time.Time) (uint32, error) {
+	timestamp := t.Unix()
+	n := uint32(0)
+	for _, s := range ms.data {
+		if s.CreatorIP == creatorIP && s.CreatedOn.Unix() >= timestamp {
+			n++
+		}
+	}
+	return n, nil
 }

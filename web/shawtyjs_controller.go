@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"go.3fps.com/shawty/data"
 	"go.3fps.com/utils/log"
+	"go.3fps.com/shawty/utils"
 	"html/template"
 	"net/http"
 	"net/url"
 	"regexp"
+	"strconv"
+	"time"
 )
 
 var urlPattern = regexp.MustCompile("^(?i)(https?)://.+$")
@@ -31,8 +34,10 @@ func NewShawtyJSController(config map[string]string, sh data.Shawties) *ShawtyJS
 }
 
 // GetJSResponse response to javascript request, based on the URL and the bookmarklet flag
-func (controller *ShawtyJSController) GetJSResponse(url string, bm bool) (res *ResPkg) {
+func (controller *ShawtyJSController) GetJSResponse(url, creatorIP string, bm bool) (res *ResPkg) {
 	domain := controller.config["SHAWTY_DOMAIN"]
+	limit, _ := strconv.ParseUint(controller.config["SHAWTY_LPM"], 0, 32)
+
 	res = NewResPkg()
 	res.Data["Bookmarklet"] = bm
 	res.Data["Domain"] = domain
@@ -47,11 +52,36 @@ func (controller *ShawtyJSController) GetJSResponse(url string, bm bool) (res *R
 			res.Data["Success"] = 0
 			res.Errors = append(res.Errors, errors.New("this url is already shortened"))
 		} else {
-			shawty, err := controller.sh.GetOrCreate(url)
-			if err != nil {
-				res.Data["Success"] = 0
-				res.Errors = append(res.Errors, errors.New("cannot shorten this link"))
-			} else {
+
+			shawty, err := controller.sh.GetByUrl(url)
+
+			if err != nil { // need to create
+				minuteAgo := time.Unix(time.Now().Unix()-60, 0)
+				numLinks, err := controller.sh.NumLinks(creatorIP, minuteAgo)
+
+				if err != nil {
+					res.Data["Success"] = 0
+					res.Errors = append(res.Errors, errors.New("unknown error occured"))
+					log.Errorf("%v", err)
+				} else {
+
+					// check for rate limit
+					if numLinks >= uint32(limit) {
+						res.Data["Success"] = 0
+						res.Errors = append(res.Errors, errors.New("you are shortening your links too quickly"))
+						log.Errorf("%s has reached the rate limit (%d)", creatorIP, limit)
+					} else {
+						shawty, err = controller.sh.Create("", url, creatorIP)
+						if err != nil {
+							res.Data["Success"] = 0
+							res.Errors = append(res.Errors, errors.New("cannot shorten this link"))
+							log.Errorf("%v", err)
+						}
+					}
+				}
+			}
+
+			if res.Data["Success"] == 1 {
 				res.Data["Shawty"] = shawty
 				res.Data["Short"] = data.ShortID(shawty.ID, shawty.Rand)
 			}
@@ -76,7 +106,7 @@ func (controller *ShawtyJSController) ServeHTTP(w http.ResponseWriter, r *http.R
 		}
 	}
 
-	res := controller.GetJSResponse(u, r.FormValue("bm") == "1")
+	res := controller.GetJSResponse(u, utils.HttpRemoteIP(r), r.FormValue("bm") == "1")
 	fmt.Println(res)
 	tpl := getShawtyJs()
 	w.Header().Set("Content-Type", "application/javascript")

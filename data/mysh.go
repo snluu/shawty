@@ -70,17 +70,17 @@ func (sh *MySh) GetByID(id uint64, r string) (*Shawty, error) {
 	return s, nil
 }
 
-func (sh *MySh) Create(r string, url string) (*Shawty, error) {
+func (sh *MySh) Create(r string, url, creatorIP string) (*Shawty, error) {
 	if r == "" {
 		r = utils.ToSafeBase(uint64(sh.random.Byte()) % utils.BaseLen)
 	}
-	var stmt, err = sh.db.Prepare("insert ignore into `shawties`(`Rand`, `Hits`, `Url`, `CreatedOn`) values(?, 0, ?, ?)")
+	var stmt, err = sh.db.Prepare("insert ignore into `shawties`(`Rand`, `Hits`, `Url`, `CreatorIP`, `CreatedOn`) values(?, 0, ?, ?, ?)")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 	var now = time.Now()
-	result, err := stmt.Exec(r, url, now.Unix())
+	result, err := stmt.Exec(r, url, creatorIP, now.Unix())
 	if err != nil {
 		return nil, err
 	}
@@ -89,16 +89,22 @@ func (sh *MySh) Create(r string, url string) (*Shawty, error) {
 	if err != nil {
 		return nil, err
 	}
-	var s = &Shawty{uint64(id), r, 0, url, now}
+	var s = &Shawty{
+		ID:        uint64(id),
+		Rand:      r,
+		Hits:      0,
+		Url:       url,
+		CreatorIP: creatorIP,
+		CreatedOn: now}
 	log.Infof("Created link ID %d", id)
 	return s, nil
 }
 
-func (sh *MySh) GetOrCreate(url string) (*Shawty, error) {
+func (sh *MySh) GetOrCreate(url, creatorIP string) (*Shawty, error) {
 	var s, err = sh.GetByUrl(url)
 	if err != nil {
 		// try creating
-		s, err = sh.Create("", url)
+		s, err = sh.Create("", url, creatorIP)
 		if err != nil {
 			return nil, err
 		}
@@ -118,4 +124,20 @@ func (sh *MySh) IncHits(id uint64) error {
 		return err
 	}
 	return nil
+}
+
+func (sh *MySh) NumLinks(creatorIP string, t time.Time) (uint32, error) {
+	var stmt, err = sh.db.Prepare("select count(`ID`) NumLinks from `shawties` where `CreatorIP` = ? and `CreatedOn` >= ?")
+	if err != nil {
+		return uint32(0), err
+	}
+	defer stmt.Close()
+
+	var row = stmt.QueryRow(creatorIP, t.Unix())
+	n := uint32(0)
+	err = row.Scan(&n)
+	if err != nil {
+		return uint32(0), err
+	}
+	return n, nil
 }

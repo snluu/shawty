@@ -16,12 +16,12 @@ func getShortIDTestData() (config map[string]string, seed uint64, sh data.Shawti
 	rand := utils.NewFakeRand()
 	rand.Seed(seed)
 
-	config = map[string]string{"SHAWTY_DOMAIN": fmt.Sprintf("shawty%d.local", seed)}
+	config = map[string]string{"SHAWTY_DOMAIN": fmt.Sprintf("shawty%d.local", seed), "SHAWTY_LPM": "1000"}
 
 	sh = data.NewMemSh(rand)
-	sh.Create("", "http://test.com/url1")
-	sh.Create("", "http://test.com/url2")
-	sh.Create("", "http://test.com/url3")
+	sh.Create("", "http://test.com/url1", "127.0.0.1")
+	sh.Create("", "http://test.com/url2", "127.0.0.1")
+	sh.Create("", "http://test.com/url3", "127.0.0.1")
 
 	return
 }
