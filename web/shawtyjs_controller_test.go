@@ -16,12 +16,15 @@ func getShawtyJSTestData() (config map[string]string, seed uint64, sh data.Shawt
 	rand := utils.NewFakeRand()
 	rand.Seed(seed)
 
-	config = map[string]string{"SHAWTY_DOMAIN": fmt.Sprintf("shawty%d.local", seed)}
+	config = map[string]string{
+		"SHAWTY_DOMAIN": fmt.Sprintf("shawty%d.local", seed),
+		"SHAWTY_LPM":    "1000",
+	}
 
 	sh = data.NewMemSh(rand)
-	sh.Create("", "http://test.com/url1")
-	sh.Create("", "http://test.com/url2")
-	sh.Create("", "http://test.com/url3")
+	sh.Create("", "http://test.com/url1", "127.0.0.1")
+	sh.Create("", "http://test.com/url2", "127.0.0.1")
+	sh.Create("", "http://test.com/url3", "127.0.0.1")
 
 	return
 }
@@ -30,7 +33,7 @@ func testShawtyJSInvalidUrl(t *testing.T, url string) {
 	conf, _, sh := getShawtyJSTestData()
 	controller := NewShawtyJSController(conf, sh)
 
-	res := controller.GetJSResponse(url, false)
+	res := controller.GetJSResponse(url, "127.0.0.1", false)
 
 	if res == nil {
 		t.Error("No response")
@@ -47,15 +50,10 @@ func testShawtyJSInvalidUrl(t *testing.T, url string) {
 	}
 }
 
-// TestShawtyJSInvalidUrl tests the response when the JS file is requested with an invalid Url
-func TestShawtyJSInvalidUrl(t *testing.T) {
-	testShawtyJSInvalidUrl(t, "some thing invalid")
-}
-
 func testShawtyJSValidUrl(t *testing.T, url string, expectedID uint64) {
 	conf, seed, sh := getShawtyJSTestData()
 	controller := NewShawtyJSController(conf, sh)
-	res := controller.GetJSResponse(url, false)
+	res := controller.GetJSResponse(url, "127.0.0.1", false)
 	shortID := data.ShortID(expectedID, utils.ToSafeBase(seed))
 
 	if res == nil {
@@ -84,6 +82,11 @@ func testShawtyJSValidUrl(t *testing.T, url string, expectedID uint64) {
 	}
 }
 
+// TestShawtyJSInvalidUrl tests the response when the JS file is requested with an invalid Url
+func TestShawtyJSInvalidUrl(t *testing.T) {
+	testShawtyJSInvalidUrl(t, "some thing invalid")
+}
+
 // TestShawtyJSExistingUrl tests the response when JS is requested with a valid existing URL
 func TestShawtyJSExistingUrl(t *testing.T) {
 	testShawtyJSValidUrl(t, "http://test.com/url3", 3)
@@ -99,12 +102,12 @@ func TestShawtyJSBookmarkletFlag(t *testing.T) {
 	conf, _, sh := getShawtyJSTestData()
 	controller := NewShawtyJSController(conf, sh)
 
-	res := controller.GetJSResponse("http://test.com/url3", false)
+	res := controller.GetJSResponse("http://test.com/url3", "127.0.0.1", false)
 	if res.Data["Bookmarklet"].(bool) != false {
 		t.Error("Bookmarklet flag expecting 'false', but returned 'true'")
 	}
 
-	res = controller.GetJSResponse("http://test.com/url3", true)
+	res = controller.GetJSResponse("http://test.com/url3", "127.0.0.1", true)
 	if res.Data["Bookmarklet"].(bool) != true {
 		t.Error("Bookmarklet flag expecting 'true', but returned 'false'")
 	}
@@ -119,4 +122,28 @@ func TestShawtyJSDupDomain(t *testing.T) {
 
 	testShawtyJSInvalidUrl(t, url1)
 	testShawtyJSInvalidUrl(t, url2)
+}
+
+// TestShawtyJSRateLimit tests the rate limit and make sure it doesn't allow the same IP
+func TestShawtyJSRateLimit(t *testing.T) {
+	conf, _, sh := getShawtyJSTestData()
+	conf["SHAWTY_LPM"] = "3"
+
+	controller := NewShawtyJSController(conf, sh)
+	res := controller.GetJSResponse("http://test.com/url3", "127.0.0.1", false)
+	if res.Data["Success"].(int) != 1 {
+		t.Error("Existing URL should not be affected by rate limit")
+	}
+
+	newUrl := "http://example.com/something-new"
+
+	res = controller.GetJSResponse(newUrl, "127.0.0.1", false)
+	if res.Data["Success"].(int) != 0 {
+		t.Error("Rate limit must be applied when creating a new URL")
+	}
+
+	_, err := sh.GetByUrl(newUrl)
+	if err == nil {
+		t.Error("When rate limit is hit, new URL requests must not be created")
+	}
 }
