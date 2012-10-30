@@ -16,3 +16,15 @@ A URL shortener (visit http://luu.bz)
 3. Run project
   1. Go to the shawty diretory: `cd $GOPATH/src/go.3fps.com/shawty`
   2. Execute the run script (might need `sudo` if the port is set to 80): `./run`
+
+## History
+
+### 1.1.0
+* Rate limit
+
+### 1.0.1
+* GOMAXPROCS support
+* Various bug fixes and enhancements
+
+### 1.0
+* Initial release
