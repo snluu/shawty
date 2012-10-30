@@ -1,5 +1,5 @@
 # shawty
-A URL shortener (visit http://luu.bz) 
+A URL shortener (visit http://luu.bz)
 
 ## Build status:
 - **master**: always stable

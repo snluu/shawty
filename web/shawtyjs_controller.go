@@ -51,6 +51,7 @@ func (controller *ShawtyJSController) GetJSResponse(url string, bm bool) (res *R
 			if err != nil {
 				res.Data["Success"] = 0
 				res.Errors = append(res.Errors, errors.New("cannot shorten this link"))
+				log.Errorf("Fail to shorten link: %v", err)
 			} else {
 				res.Data["Shawty"] = shawty
 				res.Data["Short"] = data.ShortID(shawty.ID, shawty.Rand)
@@ -77,7 +78,6 @@ func (controller *ShawtyJSController) ServeHTTP(w http.ResponseWriter, r *http.R
 	}
 
 	res := controller.GetJSResponse(u, r.FormValue("bm") == "1")
-	fmt.Println(res)
 	tpl := getShawtyJs()
 	w.Header().Set("Content-Type", "application/javascript")
 	if err := tpl.Execute(w, res); err != nil {
