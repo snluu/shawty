@@ -19,12 +19,10 @@ A URL shortener (visit http://luu.bz)
 
 ## History
 
-### 1.1.0
-* Rate limit
-
-### 1.0.1
-* GOMAXPROCS support
-* Various bug fixes and enhancements
-
-### 1.0
-* Initial release
+### Version 1
+* 1.1.1: SSL support for bookmarklet
+* 1.1.0: Rate limit
+* 1.0.1
+  * GOMAXPROCS support
+  * Various bug fixes and enhancements
+* 1.0: Initial release
