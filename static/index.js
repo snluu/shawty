@@ -29,7 +29,7 @@ function shorten() {
 	urlStr = $.trim(urlStr);
 	urlBox.val(urlStr);
 	if (urlStr != '')
-		$.getScript('shawty.js?url=' + escape(urlStr));
+		$.getScript('shawty.js?url=' + encodeURIComponent(urlStr));
 	else 
 		err('a valid url has to start with http:// or https://');
 
