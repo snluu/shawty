@@ -20,6 +20,7 @@ A URL shortener (visit http://luu.bz)
 ## History
 
 ### Version 1
+* 1.1.3: Updated to use new version of logger ([Issue #6]()(https://github.com/3fps/shawty/issues/6))
 * 1.1.2: Fixed [issue 5](https://github.com/3fps/shawty/issues/5)
 * 1.1.1: SSL support for bookmarklet ([Issue #4](https://github.com/3fps/shawty/issues/4))
 * 1.1.0: Rate limit
