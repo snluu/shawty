@@ -18,11 +18,14 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// read configurations
-	confKeys := []string{"SHAWTY_PORT", "SHAWTY_DB", "SHAWTY_DOMAIN", "SHAWTY_MODE", "SHAWTY_LPM"}
+	confKeys := []string{"SHAWTY_PORT", "SHAWTY_DB", "SHAWTY_DOMAIN", "SHAWTY_MODE", "SHAWTY_LPM", "SHAWTY_LOG_DIR"}
 	config := make(map[string]string)
 	for _, k := range confKeys {
 		config[k] = os.Getenv(k)
 	}
+
+	// setup logger
+	log.SetDir(config["SHAWTY_LOG_DIR"])
 
 	// setup data
 	random := utils.NewBestRand()

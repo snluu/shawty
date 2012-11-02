@@ -3,6 +3,7 @@ export SHAWTY_DB=""                # e.g. SHAWTY_DB="user:password@tcp(localhost
 export SHAWTY_PORT=8080            # e.g. SHAWTY_PORT=8080
 export SHAWTY_MODE="HTTP"          # "HTTP" or "FCGI"
 export SHAWTY_LPM=12               # number of links can be created per minute (existings don't count)
+export SHAWTY_LOG_DIR=""           # log directory. leave blank ("") to use standard output
 
 go get -d
 go build .
