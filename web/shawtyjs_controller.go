@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"go.3fps.com/shawty/data"
-	"go.3fps.com/utils/log"
 	"go.3fps.com/shawty/utils"
+	"go.3fps.com/utils/log"
 	"html/template"
 	"net/http"
 	"net/url"
@@ -46,46 +46,47 @@ func (controller *ShawtyJSController) GetJSResponse(url, creatorIP string, bm bo
 	if !urlPattern.MatchString(url) {
 		res.Data["Success"] = 0
 		res.Errors = append(res.Errors, errors.New("a valid url has to start with http:// or https://"))
-	} else {
-		dupDomainPattern := regexp.MustCompile(fmt.Sprintf("^(?i)(https?)://%s.*", domain))
-		if dupDomainPattern.MatchString(url) {
+		return
+	}
+
+	dupDomainPattern := regexp.MustCompile(fmt.Sprintf("^(?i)(https?)://%s.*", domain))
+	if dupDomainPattern.MatchString(url) {
+		res.Data["Success"] = 0
+		res.Errors = append(res.Errors, errors.New("this url is already shortened"))
+		return
+	}
+
+	shawty, err := controller.sh.GetByUrl(url)
+
+	if err != nil { // need to create
+		minuteAgo := time.Unix(time.Now().Unix()-60, 0)
+		numLinks, err := controller.sh.NumLinks(creatorIP, minuteAgo)
+
+		if err != nil {
 			res.Data["Success"] = 0
-			res.Errors = append(res.Errors, errors.New("this url is already shortened"))
+			res.Errors = append(res.Errors, errors.New("unknown error occured"))
+			log.Errorf("%v", err)
 		} else {
 
-			shawty, err := controller.sh.GetByUrl(url)
-
-			if err != nil { // need to create
-				minuteAgo := time.Unix(time.Now().Unix()-60, 0)
-				numLinks, err := controller.sh.NumLinks(creatorIP, minuteAgo)
-
+			// check for rate limit
+			if numLinks >= uint32(limit) {
+				res.Data["Success"] = 0
+				res.Errors = append(res.Errors, errors.New("you are shortening your links too quickly"))
+				log.Errorf("%s has reached the rate limit (%d)", creatorIP, limit)
+			} else {
+				shawty, err = controller.sh.Create("", url, creatorIP)
 				if err != nil {
 					res.Data["Success"] = 0
-					res.Errors = append(res.Errors, errors.New("unknown error occured"))
+					res.Errors = append(res.Errors, errors.New("cannot shorten this link"))
 					log.Errorf("%v", err)
-				} else {
-
-					// check for rate limit
-					if numLinks >= uint32(limit) {
-						res.Data["Success"] = 0
-						res.Errors = append(res.Errors, errors.New("you are shortening your links too quickly"))
-						log.Errorf("%s has reached the rate limit (%d)", creatorIP, limit)
-					} else {
-						shawty, err = controller.sh.Create("", url, creatorIP)
-						if err != nil {
-							res.Data["Success"] = 0
-							res.Errors = append(res.Errors, errors.New("cannot shorten this link"))
-							log.Errorf("%v", err)
-						}
-					}
 				}
 			}
-
-			if res.Data["Success"] == 1 {
-				res.Data["Shawty"] = shawty
-				res.Data["Short"] = data.ShortID(shawty.ID, shawty.Rand)
-			}
 		}
+	}
+
+	if res.Data["Success"] == 1 {
+		res.Data["Shawty"] = shawty
+		res.Data["Short"] = data.ShortID(shawty.ID, shawty.Rand)
 	}
 
 	return
@@ -93,7 +94,7 @@ func (controller *ShawtyJSController) GetJSResponse(url, creatorIP string, bm bo
 
 func (controller *ShawtyJSController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer closeReqBody(r)
-	
+
 	var u = r.FormValue("url")
 	if u == "" {
 		u = r.Referer()
@@ -108,7 +109,7 @@ func (controller *ShawtyJSController) ServeHTTP(w http.ResponseWriter, r *http.R
 		}
 	}
 
-	res := controller.GetJSResponse(u, utils.HttpRemoteIP(r), r.FormValue("bm") == "1")	
+	res := controller.GetJSResponse(u, utils.HttpRemoteIP(r), r.FormValue("bm") == "1")
 	tpl := getShawtyJs()
 	w.Header().Set("Content-Type", "application/javascript")
 	if err := tpl.Execute(w, res); err != nil {

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"runtime"
 	"code.google.com/p/gorilla/mux"
 	"fmt"
 	"go.3fps.com/shawty/data"
@@ -12,6 +11,7 @@ import (
 	"net/http"
 	"net/http/fcgi"
 	"os"
+	"runtime"
 )
 
 func main() {
