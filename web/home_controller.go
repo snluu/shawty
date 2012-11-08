@@ -38,13 +38,13 @@ func (page *HomeController) Index() *ResPkg {
 func (page *HomeController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Info("Index requested")
 	defer closeReqBody(r)
-	
+
 	res := page.Index()
 	tpl := getIndexHtml()
 	if err := tpl.Execute(w, res); err != nil {
 		log.Error("Cannot execute index template")
 		log.Error(err)
-		http.Error(w, "Error", http.StatusInternalServerError)		
+		http.Error(w, "Error", http.StatusInternalServerError)
 	}
-	
+
 }
