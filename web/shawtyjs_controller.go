@@ -43,7 +43,10 @@ func (controller *ShawtyJSController) GetJSResponse(url, creatorIP string, bm bo
 	res.Data["Domain"] = domain
 	res.Data["Success"] = 1
 
-	if !urlPattern.MatchString(url) {
+	if url == "a long URL" {
+		res.Data["Success"] = 0
+		res.Errors = append(res.Errors, errors.New("look at you, the funniest person alive. you just won the internet."))
+	} else if !urlPattern.MatchString(url) {
 		res.Data["Success"] = 0
 		res.Errors = append(res.Errors, errors.New("a valid url has to start with http:// or https://"))
 		return

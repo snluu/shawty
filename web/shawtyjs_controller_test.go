@@ -97,6 +97,11 @@ func TestShawtyJSNewUrl(t *testing.T) {
 	testShawtyJSValidUrl(t, "http://test.com/something", 4)
 }
 
+// TestShawtyJSEasterEgg tests the response when the JS file is requested with "a long URL"
+func TestShawtyJSEasterEgg(t *testing.T) {
+	testShawtyJSInvalidUrl(t, "a long URL")
+}
+
 // TestShawtyJSBookmarkletFlag makes sure the bookmarklet flag is correct
 func TestShawtyJSBookmarkletFlag(t *testing.T) {
 	conf, _, sh := getShawtyJSTestData()
