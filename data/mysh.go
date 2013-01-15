@@ -1,7 +1,7 @@
 package data
 
 import (
-	_ "code.google.com/p/go-mysql-driver/mysql"
+	_ "github.com/Go-SQL-Driver/MySQL"
 	"database/sql"
 	"go.3fps.com/shawty/utils"
 	"go.3fps.com/utils/log"
