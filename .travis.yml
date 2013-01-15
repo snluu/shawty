@@ -9,5 +9,5 @@ notifications:
   email: false
 branches:
   only:
-    - sandbox
+    - master
 
