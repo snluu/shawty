@@ -1,10 +1,8 @@
 # shawty
 A URL shortener (visit http://luu.bz)
 
-## Build status:
-- **master**: always stable
-- **stable**: always stable
-- **sandbox**: [![Build Status](https://secure.travis-ci.org/3fps/shawty.png)](http://travis-ci.org/3fps/shawty)
+## Build status
+[![Build Status](https://secure.travis-ci.org/3fps/shawty.png)](http://travis-ci.org/3fps/shawty)
 
 ## Get started
 1. Code setup
