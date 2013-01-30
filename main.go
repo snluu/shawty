@@ -1,12 +1,12 @@
 package main
 
 import (
-	"code.google.com/p/gorilla/mux"
 	"fmt"
-	"go.3fps.com/shawty/data"
-	"go.3fps.com/shawty/utils"
-	"go.3fps.com/shawty/web"
-	"go.3fps.com/utils/log"
+	log "github.com/3fps/log2go"
+	"github.com/3fps/shawty/data"
+	"github.com/3fps/shawty/utils"
+	"github.com/3fps/shawty/web"
+	"github.com/gorilla/mux"
 	"net"
 	"net/http"
 	"net/http/fcgi"

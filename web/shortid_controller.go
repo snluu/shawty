@@ -1,9 +1,9 @@
 package web
 
 import (
-	"code.google.com/p/gorilla/mux"
-	"go.3fps.com/shawty/data"
-	"go.3fps.com/utils/log"
+	log "github.com/3fps/log2go"
+	"github.com/3fps/shawty/data"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 

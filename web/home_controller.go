@@ -1,7 +1,7 @@
 package web
 
 import (
-	"go.3fps.com/utils/log"
+	log "github.com/3fps/log2go"
 	"html/template"
 	"net/http"
 )

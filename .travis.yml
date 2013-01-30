@@ -1,9 +1,6 @@
 language: go
-install:
-  - mkdir $GOPATH/src/go.3fps.com
-  - mv $GOPATH/src/github.com/3fps/shawty $GOPATH/src/go.3fps.com
 script:
-  - cd $GOPATH/src/go.3fps.com/shawty
+  - cd $GOPATH/src/github.com/3fps/shawty
   - go get -d -v && go build -v && go test -i ./... && go test -test.v ./... 
 notifications:
   email: false

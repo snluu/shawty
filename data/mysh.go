@@ -1,10 +1,10 @@
 package data
 
 import (
-	_ "github.com/Go-SQL-Driver/MySQL"
 	"database/sql"
-	"go.3fps.com/shawty/utils"
-	"go.3fps.com/utils/log"
+	log "github.com/3fps/log2go"
+	"github.com/3fps/shawty/utils"
+	_ "github.com/Go-SQL-Driver/MySQL"
 	"time"
 )
 

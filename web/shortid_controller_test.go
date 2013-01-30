@@ -2,8 +2,8 @@ package web
 
 import (
 	"fmt"
-	"go.3fps.com/shawty/data"
-	"go.3fps.com/shawty/utils"
+	"github.com/3fps/shawty/data"
+	"github.com/3fps/shawty/utils"
 	"net/http"
 	"testing"
 	"time"
