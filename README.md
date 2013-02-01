@@ -13,7 +13,7 @@ A URL shortener (visit http://luu.bz)
   1. Create a MySQL database and run the setup script at `shawty/install/db.sql`
 3. Run project
   1. Go to the shawty diretory: `cd $GOPATH/src/github.com/3fps/shawty`
-  2. Execute the run script (might need `sudo` if the port is set to 80): `./run`
+  2. Execute the run script (might need `sudo` if the port is set to 80): `source run`
 
 ## History
 
