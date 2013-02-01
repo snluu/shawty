@@ -1,4 +1,4 @@
 go get -d
 go build .
-sh shawtyconf.sh
+source shawtyconf.sh
 nohup ./shawty > $HOME/shawty.out 2> $HOME/shawty.err < /dev/null &
