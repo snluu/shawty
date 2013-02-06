@@ -1,3 +1,4 @@
+git checkout -v1.1.7
 go get -d
 go build .
 source shawtyconf.sh
