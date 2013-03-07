@@ -18,6 +18,7 @@ A URL shortener (visit http://luu.bz)
 ## History
 
 ### Version 1
+* 1.2.2: Fixed run script
 * 1.2.1: Minor fixes
 * 1.2.0: Added support for Postgres (**This update requires configuration change**).
 * 1.1.8: Give run script execute permission from the repository
