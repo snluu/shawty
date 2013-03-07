@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	log "github.com/3fps/log2go"
 	"github.com/3fps/shawty/data"
@@ -12,6 +13,7 @@ import (
 	"net/http/fcgi"
 	"os"
 	"runtime"
+	"strings"
 )
 
 func main() {
@@ -19,7 +21,7 @@ func main() {
 
 	// read configurations
 	confKeys := []string{
-		"SHAWTY_PORT", "SHAWTY_DB", "SHAWTY_DOMAIN",
+		"SHAWTY_PORT", "SHAWTY_DB_TYPE", "SHAWTY_DB", "SHAWTY_DOMAIN",
 		"SHAWTY_MODE", "SHAWTY_LPM", "SHAWTY_LOG_DIR",
 	}
 	config := make(map[string]string)
@@ -28,13 +30,24 @@ func main() {
 	}
 
 	// setup logger
-	// log.SetDir(config["SHAWTY_LOG_DIR"])
+	log.SetDir(config["SHAWTY_LOG_DIR"])
 
 	// setup data
 	random := utils.NewBestRand()
-	shawties, err := data.NewPgSh(random, config["SHAWTY_DB"])
+	dbType := strings.ToLower(config["SHAWTY_DB_TYPE"])
+	var shawties data.Shawties
+	var err error
+
+	if dbType == "pg" || dbType == "postgres" || dbType == "postgresql" {
+		shawties, err = data.NewPgSh(random, config["SHAWTY_DB"])
+	} else if dbType == "mysql" {
+		shawties, err = data.NewMySh(random, config["SHAWTY_DB"])
+	} else {
+		err = errors.New("Unknown database type. Please check $SHAWTY_DB_TYPE")
+	}
 	if err != nil {
-		log.Error("Cannot create MySh")
+		log.Error("Cannot create data source")
+		log.Error(err)
 		return
 	}
 	defer shawties.Close()
@@ -66,7 +79,7 @@ func main() {
 
 	log.Infof("Listening at %s", port)
 
-	runMode := config["SHAWTY_MODE"]
+	runMode := strings.ToLower(config["SHAWTY_MODE"])
 
 	switch runMode {
 	case "fcgi":

@@ -8,9 +8,9 @@ A URL shortener (visit http://luu.bz)
 1. Code setup
   1. Make sure you have [GOPATH](http://golang.org/cmd/go/#GOPATH_environment_variable) setup correctly.
   2. Put `shawty` at `$GOPATH/src/github.com/3fps/shawty`
-  3. [Set configurations](https://github.com/3fps/shawty/wiki/Configuration). For DB configuration, please see the examples at the [Go-MySQL-Driver](https://github.com/Go-SQL-Driver/MySQL#examples) page.
-2. Database setup (MySQL)
-  1. Create a MySQL database and run the setup script at `shawty/install/db.sql`
+  3. [Set configurations](https://github.com/3fps/shawty/wiki/Configuration). For DB configuration, please see the examples at the [Go-MySQL-Driver](https://github.com/Go-SQL-Driver/MySQL#examples) or [Postgres driver](https://github.com/bmizerany/pq#use) page.
+2. Database setup
+  1. Create a database and run the setup script at `shawty/install/<your db type>/db.sql`
 3. Run project
   1. Go to the shawty diretory: `cd $GOPATH/src/github.com/3fps/shawty`
   2. Execute the run script (might need `sudo` if the port is set to 80): `source run`
@@ -18,6 +18,7 @@ A URL shortener (visit http://luu.bz)
 ## History
 
 ### Version 1
+* 1.2.0: Added support for Postgres (**This update requires configuration change**).
 * 1.1.7: Fixed run script not calling config file properly
 * 1.1.6: Separated run script from the configuration
 * 1.1.5: Index displays version number

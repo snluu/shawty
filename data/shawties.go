@@ -16,4 +16,6 @@ type Shawties interface {
 	IncHits(id uint64) error
 	// NumLinks counts the number of links created by a specific IP address after a point of time
 	NumLinks(creatorIP string, t time.Time) (uint32, error)
+	// Close cleans up the database
+	Close() error
 }
