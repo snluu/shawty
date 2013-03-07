@@ -15,7 +15,7 @@ func NewMemSh(r utils.Rand) *MemSh {
 	}
 }
 
-// MemSh implements the Shawties interface and stores all the 
+// MemSh implements the Shawties interface and stores all the
 // Shawty instances in memory. Do not use this in production or your data will be lost.
 type MemSh struct {
 	nextID uint64
@@ -87,4 +87,8 @@ func (ms *MemSh) NumLinks(creatorIP string, t time.Time) (uint32, error) {
 		}
 	}
 	return n, nil
+}
+
+func (this *MemSh) Close() error {
+	return nil
 }
