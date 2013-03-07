@@ -1,5 +1,5 @@
 cd `dirname $0`
-git checkout v1.1.8
+git checkout latest 
 go get -d
 go build .
 source shawtyconf.sh
