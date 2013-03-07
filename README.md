@@ -10,7 +10,7 @@ A URL shortener (visit http://luu.bz)
   2. Put `shawty` at `$GOPATH/src/github.com/3fps/shawty`
   3. [Set configurations](https://github.com/3fps/shawty/wiki/Configuration). For DB configuration, please see the examples at the [Go-MySQL-Driver](https://github.com/Go-SQL-Driver/MySQL#examples) or [Postgres driver](https://github.com/bmizerany/pq#use) page.
 2. Database setup
-  1. Create a database and run the setup script at `shawty/install/<your db type>/db.sql`
+  1. Create a database and run the setup script at `shawty/install/<your db type>/db.sql`. You might need to modify the table creation script.
 3. Run project
   1. Go to the shawty diretory: `cd $GOPATH/src/github.com/3fps/shawty`
   2. Execute the run script (might need `sudo` if the port is set to 80): `source run`
