@@ -1,5 +1,5 @@
 cd `dirname $0`
-git checkout release 
+git checkout master 
 go get -d
 go build .
 nohup ./shawty > $HOME/shawty.out 2> $HOME/shawty.err < /dev/null &
