@@ -2,5 +2,4 @@ cd `dirname $0`
 git checkout latest 
 go get -d
 go build .
-source shawtyconf.sh
 nohup ./shawty > $HOME/shawty.out 2> $HOME/shawty.err < /dev/null &
