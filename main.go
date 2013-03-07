@@ -28,11 +28,11 @@ func main() {
 	}
 
 	// setup logger
-	log.SetDir(config["SHAWTY_LOG_DIR"])
+	// log.SetDir(config["SHAWTY_LOG_DIR"])
 
 	// setup data
 	random := utils.NewBestRand()
-	shawties, err := data.NewMySh(random, config["SHAWTY_DB"])
+	shawties, err := data.NewPgSh(random, config["SHAWTY_DB"])
 	if err != nil {
 		log.Error("Cannot create MySh")
 		return
@@ -63,13 +63,17 @@ func main() {
 		return
 	}
 	defer l.Close()
+
 	log.Infof("Listening at %s", port)
 
 	runMode := config["SHAWTY_MODE"]
+
 	switch runMode {
 	case "fcgi":
+		log.Info("Serving FCGI mode")
 		fcgi.Serve(l, router)
 	default:
+		log.Info("Serving HTTP mode")
 		http.Serve(l, router)
 	}
 }

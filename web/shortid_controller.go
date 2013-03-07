@@ -20,12 +20,14 @@ func NewShortIDController(config map[string]string, sh data.Shawties) *ShortIDCo
 func (ctrl *ShortIDController) Respond(shortID string) (res *ResPkg) {
 	res = NewResPkg()
 
-	// extract the ID	
+	// extract the ID
 	id, random, err := data.FullID(shortID)
 
 	if err != nil {
 		res.HttpStatus = http.StatusNotFound
 		res.Errors = append(res.Errors, err)
+		log.Error("shortid_controller Respond error")
+		log.Error(err)
 		return
 	}
 
@@ -33,6 +35,8 @@ func (ctrl *ShortIDController) Respond(shortID string) (res *ResPkg) {
 	if err != nil {
 		res.HttpStatus = http.StatusNotFound
 		res.Errors = append(res.Errors, err)
+		log.Error("shortid_controller Respond error")
+		log.Error(err)
 		return
 	}
 
@@ -50,6 +54,7 @@ func (ctrl *ShortIDController) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	shortID := vars["shortID"]
 	res := ctrl.Respond(shortID)
+	log.Infof("ServeHTTP for short ID %s", shortID)
 
 	if res.HttpStatus == http.StatusMovedPermanently {
 		s := res.Data["Shawty"].(*data.Shawty)
