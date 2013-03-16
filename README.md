@@ -6,7 +6,7 @@ A URL shortener (visit http://luu.bz)
 
 ## Get started
 1. Code setup
-  1. Make sure you have [GOPATH](http://golang.org/cmd/go/#GOPATH_environment_variable) setup correctly.
+  1. Make sure you have [GOPATH](http://golang.org/cmd/go/#hdr-GOPATH_environment_variable) setup correctly.
   2. Put `shawty` at `$GOPATH/src/github.com/3fps/shawty`
   3. [Set configurations](https://github.com/3fps/shawty/wiki/Configuration). For DB configuration, please see the examples at the [Go-MySQL-Driver](https://github.com/Go-SQL-Driver/MySQL#examples) or [Postgres driver](https://github.com/bmizerany/pq#use) page.
 2. Database setup
