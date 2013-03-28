@@ -1,2 +1,5 @@
 shawty
 shawty.exe
+src
+!src/shawty
+pkg
