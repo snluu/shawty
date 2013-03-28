@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	log "github.com/3fps/log2go"
 	"github.com/3fps/shawty/utils"
-	_ "github.com/Go-SQL-Driver/MySQL"
+	_ "github.com/go-sql-driver/mysql"
 	"time"
 )
 
