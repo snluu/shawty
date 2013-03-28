@@ -3,39 +3,42 @@ package data
 import (
 	"database/sql"
 	log "github.com/3fps/log2go"
-	"github.com/3fps/shawty/utils"
-	_ "github.com/Go-SQL-Driver/MySQL"
+	"shawty/utils"
+	_ "github.com/lib/pq"
 	"time"
 )
 
-// MySh is the MySQL implementation of Shawties interface
-type MySh struct {
+// PgSh is the MySQL implementation of Shawties interface
+type PgSh struct {
 	db     *sql.DB
 	random utils.Rand
 }
 
-// NewMySh yields a new MySh instance with pre-open database connection
-func NewMySh(random utils.Rand, dataSrc string) (*MySh, error) {
-	var sh = new(MySh)
+// NewPgSh yields a new PgSh instance with pre-open database connection
+func NewPgSh(random utils.Rand, dataSrc string) (*PgSh, error) {
+	var sh = new(PgSh)
 	sh.random = random
-	var err = sh.open("mysql", dataSrc)
+	var err = sh.open("postgres", dataSrc)
+	if err != nil {
+		log.Error("Fail to create postgresql")
+	}
 	return sh, err
 }
 
 // open opens a new database connection
-func (sh *MySh) open(driverName, dataSrc string) error {
+func (sh *PgSh) open(driverName, dataSrc string) error {
 	var db, err = sql.Open(driverName, dataSrc)
 	sh.db = db
 	return err
 }
 
 // Close closes the database connection
-func (sh *MySh) Close() error {
+func (sh *PgSh) Close() error {
 	return sh.db.Close()
 }
 
-func (sh *MySh) GetByUrl(url string) (*Shawty, error) {
-	var stmt, err = sh.db.Prepare("select `ID`, `Rand`, `Hits`, `Url`, `CreatedOn` from `shawties` where `Url` = ? limit 1")
+func (sh *PgSh) GetByUrl(url string) (*Shawty, error) {
+	var stmt, err = sh.db.Prepare("select ID, Rand, Hits, Url, CreatedOn from shawties where Url = $1 limit 1")
 	if err != nil {
 		return nil, err
 	}
@@ -46,14 +49,15 @@ func (sh *MySh) GetByUrl(url string) (*Shawty, error) {
 	var t int64
 	err = row.Scan(&s.ID, &s.Rand, &s.Hits, &s.Url, &t)
 	if err != nil {
+		log.Error(err)
 		return nil, err
 	}
 	s.CreatedOn = time.Unix(t, 0)
 	return s, nil
 }
 
-func (sh *MySh) GetByID(id uint64, r string) (*Shawty, error) {
-	var stmt, err = sh.db.Prepare("select `ID`, `Rand`, `Hits`, `Url`, `CreatedOn` from `shawties` where `ID` = ? and `Rand` = ? limit 1")
+func (sh *PgSh) GetByID(id uint64, r string) (*Shawty, error) {
+	var stmt, err = sh.db.Prepare("select ID, Rand, Hits, Url, CreatedOn from shawties where ID = $1 and Rand = $2 limit 1")
 	if err != nil {
 		return nil, err
 	}
@@ -64,29 +68,30 @@ func (sh *MySh) GetByID(id uint64, r string) (*Shawty, error) {
 	var t int64
 	err = row.Scan(&s.ID, &s.Rand, &s.Hits, &s.Url, &t)
 	if err != nil {
+		log.Error(err)
 		return nil, err
 	}
 	s.CreatedOn = time.Unix(t, 0)
 	return s, nil
 }
 
-func (sh *MySh) Create(r string, url, creatorIP string) (*Shawty, error) {
+func (sh *PgSh) Create(r string, url, creatorIP string) (*Shawty, error) {
 	if r == "" {
 		r = utils.ToSafeBase(uint64(sh.random.Byte()) % utils.BaseLen)
 	}
-	var stmt, err = sh.db.Prepare("insert ignore into `shawties`(`Rand`, `Hits`, `Url`, `CreatorIP`, `CreatedOn`) values(?, 0, ?, ?, ?)")
+	var stmt, err = sh.db.Prepare("insert into shawties(Rand, Hits, Url, CreatorIP, CreatedOn) values($1, 0, $2, $3, $4) returning ID")
 	if err != nil {
+		log.Error(err)
 		return nil, err
 	}
 	defer stmt.Close()
 	var now = time.Now()
-	result, err := stmt.Exec(r, url, creatorIP, now.Unix())
-	if err != nil {
-		return nil, err
-	}
+	row := stmt.QueryRow(r, url, creatorIP, now.Unix())
 
-	id, err := result.LastInsertId()
+	var id uint64
+	err = row.Scan(&id)
 	if err != nil {
+		log.Error(err)
 		return nil, err
 	}
 	var s = &Shawty{
@@ -100,7 +105,7 @@ func (sh *MySh) Create(r string, url, creatorIP string) (*Shawty, error) {
 	return s, nil
 }
 
-func (sh *MySh) GetOrCreate(url, creatorIP string) (*Shawty, error) {
+func (sh *PgSh) GetOrCreate(url, creatorIP string) (*Shawty, error) {
 	var s, err = sh.GetByUrl(url)
 	if err != nil {
 		// try creating
@@ -113,9 +118,10 @@ func (sh *MySh) GetOrCreate(url, creatorIP string) (*Shawty, error) {
 	return s, err
 }
 
-func (sh *MySh) IncHits(id uint64) error {
-	stmt, err := sh.db.Prepare("update `shawties` set `Hits` = `Hits` + 1 where `ID` = ?")
+func (sh *PgSh) IncHits(id uint64) error {
+	stmt, err := sh.db.Prepare("update shawties set Hits = Hits + 1 where ID = $1")
 	if err != nil {
+		log.Error(err)
 		return err
 	}
 	defer stmt.Close()
@@ -126,9 +132,10 @@ func (sh *MySh) IncHits(id uint64) error {
 	return nil
 }
 
-func (sh *MySh) NumLinks(creatorIP string, t time.Time) (uint32, error) {
-	var stmt, err = sh.db.Prepare("select count(`ID`) NumLinks from `shawties` where `CreatorIP` = ? and `CreatedOn` >= ?")
+func (sh *PgSh) NumLinks(creatorIP string, t time.Time) (uint32, error) {
+	var stmt, err = sh.db.Prepare("select count(ID) NumLinks from shawties where CreatorIP = $1 and CreatedOn >= $2")
 	if err != nil {
+		log.Error(err)
 		return uint32(0), err
 	}
 	defer stmt.Close()
@@ -137,6 +144,7 @@ func (sh *MySh) NumLinks(creatorIP string, t time.Time) (uint32, error) {
 	n := uint32(0)
 	err = row.Scan(&n)
 	if err != nil {
+		log.Error(err)
 		return uint32(0), err
 	}
 	return n, nil

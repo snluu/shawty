@@ -2,7 +2,7 @@ package data
 
 import (
 	"errors"
-	"github.com/3fps/shawty/utils"
+	"shawty/utils"
 	"time"
 )
 
