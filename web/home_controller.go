@@ -36,7 +36,6 @@ func (page *HomeController) Index() *ResPkg {
 }
 
 func (page *HomeController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Info("Index requested")
 	defer closeReqBody(r)
 
 	res := page.Index()
