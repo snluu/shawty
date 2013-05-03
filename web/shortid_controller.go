@@ -54,14 +54,11 @@ func (ctrl *ShortIDController) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	shortID := vars["shortID"]
 	res := ctrl.Respond(shortID)
-	log.Infof("ServeHTTP for short ID %s", shortID)
 
 	if res.HttpStatus == http.StatusMovedPermanently {
 		s := res.Data["Shawty"].(*data.Shawty)
-		log.Infof("Redirecting '%s' to '%s'", shortID, s.Url)
 		http.Redirect(w, r, s.Url, http.StatusMovedPermanently)
 	} else {
 		http.NotFound(w, r)
-		log.Infof("Cannot find shawty for '%s'", shortID)
 	}
 }
