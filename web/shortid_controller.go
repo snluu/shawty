@@ -2,7 +2,7 @@ package web
 
 import (
 	log "github.com/3fps/log2go"
-	"github.com/3fps/shawty/data"
+	"github.com/qomun/shawty/data"
 	"github.com/gorilla/mux"
 	"net/http"
 )

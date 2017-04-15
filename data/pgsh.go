@@ -3,8 +3,8 @@ package data
 import (
 	"database/sql"
 	log "github.com/3fps/log2go"
-	"github.com/3fps/shawty/utils"
-	_ "github.com/bmizerany/pq"
+	"github.com/qomun/shawty/utils"
+	_ "github.com/lib/pq"
 	"time"
 )
 

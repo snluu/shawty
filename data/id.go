@@ -2,7 +2,7 @@ package data
 
 import (
 	"errors"
-	"github.com/3fps/shawty/utils"
+	"github.com/qomun/shawty/utils"
 )
 
 // ShortID constructs a short ID
